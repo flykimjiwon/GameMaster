@@ -1,0 +1,7 @@
+{
+  "tool_name": "WebFetch",
+  "tool_input_preview": "{\"url\":\"https://itch.io/game-assets/free/tag-insects\",\"prompt\":\"List the free insect/bug game asset packs available. For each pack provide: name, URL, asset count if mentioned, and license type.\"}",
+  "error": "Request failed with status code 403",
+  "timestamp": "2026-03-23T14:03:50.162Z",
+  "retry_count": 5
+}

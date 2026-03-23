@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameMaster — Session Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  h1 { text-align: center; font-size: 1.8em; margin-bottom: 8px; color: #58a6ff; }
+  .subtitle { text-align: center; color: #8b949e; margin-bottom: 24px; font-size: 0.9em; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-header .emoji { font-size: 1.6em; }
+  .card-header .title { font-size: 1.1em; font-weight: 700; }
+  .card-header .badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    font-weight: 600;
+  }
+  .badge-survivor { background: #238636; color: #fff; }
+  .badge-merge { background: #8957e5; color: #fff; }
+  .badge-info { background: #388bfd; color: #fff; }
+  .card-body { padding: 16px 20px; }
+  .card-body p { color: #8b949e; font-size: 0.85em; margin-bottom: 12px; line-height: 1.5; }
+  .prompt-box {
+    position: relative;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 0.78em;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 600px;
+    overflow-y: auto;
+    color: #e6edf3;
+  }
+  .copy-btn {
+    position: sticky;
+    top: 0;
+    float: right;
+    background: #238636;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+  .copy-btn:hover { background: #2ea043; }
+  .copy-btn.copied { background: #58a6ff; }
+  .full-width { grid-column: 1 / -1; }
+  .how-to {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto 20px;
+  }
+  .how-to h2 { color: #58a6ff; font-size: 1.1em; margin-bottom: 12px; }
+  .steps { display: flex; gap: 16px; flex-wrap: wrap; }
+  .step {
+    background: #0d1117;
+    border-radius: 8px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .step .num { color: #58a6ff; font-weight: 700; font-size: 1.2em; }
+  .step .desc { color: #c9d1d9; font-size: 0.85em; margin-top: 4px; }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .steps { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<h1>GameMaster Session Dashboard</h1>
+<p class="subtitle">터미널 2개, 각각 프롬프트 1번 복붙이면 끝</p>
+
+<div class="how-to">
+  <h2>How to Use</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="desc">터미널 1 열기<br><code>cd GameMaster</code><br><code>claude</code></div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="desc">아래 초록 카드의<br><strong>Copy</strong> 클릭 → 붙여넣기</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="desc">터미널 2 열기<br><code>cd GameMaster</code><br><code>claude</code></div>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <div class="desc">아래 보라 카드의<br><strong>Copy</strong> 클릭 → 붙여넣기</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+
+<!-- ============================================ -->
+<!-- 터미널 1: Survivor Defense 전체              -->
+<!-- ============================================ -->
+<div class="card">
+  <div class="card-header">
+    <span class="emoji">🎮</span>
+    <span class="title">Terminal 1 — Survivor Defense</span>
+    <span class="badge badge-survivor">FULL BUILD</span>
+  </div>
+  <div class="card-body">
+    <p>뱀서류 서바이벌 디펜스 프로토타입 전체를 한번에 구현합니다. 복사해서 Claude Code 터미널 1에 붙여넣으세요.</p>
+    <div class="prompt-box" id="prompt-survivor">
+<button class="copy-btn" onclick="copyPrompt('prompt-survivor')">Copy</button>
+Survivor Defense 프로토타입 전체를 구현해줘.
+
+작업 디렉토리: /Users/jiwonkim/Desktop/kimjiwon/GameMaster/games/survivor-defense
+기획서: GAME_DESIGN.md를 반드시 먼저 읽고 참고해.
+이미 Phaser 프로젝트 세팅 완료 (vite + phaser + ts). npm run dev로 실행 가능.
+
+아래 마일스톤을 M0부터 M5까지 순서대로 전부 구현해. 각 마일스톤 완료 시 npm run dev로 동작 확인하고 다음으로 넘어가.
+
+## M0: 플레이어 이동 + 카메라
+- GameScene.ts: 2000x2000 맵 (단색 배경 + 그리드 패턴), 월드 바운더리
+- Player.ts: 초록 원(16px), WASD 이동(200px/s), 터치/마우스 이동, Arcade Physics
+- 카메라: startFollow(player), setBounds
+
+## M1: 적 스폰 + 충돌 + HUD
+- Enemy.ts: 슬라임(빨간 원, HP10, 속도80, DMG5), 박쥐(보라 삼각형, HP5, 속도150, DMG3), 골렘(회색 사각형, HP50, 속도40, DMG15)
+- 적은 플레이어를 향해 moveToObject로 추적, HP바 머리 위 표시
+- EnemySpawner.ts: 화면 밖 랜덤 스폰, 시간별 스폰 규칙(기획서 5C), Phaser Group 오브젝트 풀링
+- 충돌: 적→플레이어 접촉 시 데미지 (0.5초 무적), HP 0이면 게임오버
+- UIScene.ts (HUD 오버레이 씬): HP바(상단좌), 타이머(상단중, 3분), 레벨(상단우)
+
+## M2: 무기 + 경험치
+- OrbWeapon.ts: 흰 원(8px)이 플레이어 주위 원형 회전(반경60px, 180도/s), 적 충돌 시 DMG 10, 처음 1개
+- 적 처치: HP≤0 → 깜빡+축소 → destroy → 경험치 보석(파란 마름모) 드롭
+- XPSystem.ts: 자석 범위(80px) 안 보석 흡수, 경험치 바 HUD 추가
+
+## M3: 레벨업 선택 UI
+- LevelUpSystem.ts: XP 풀 차면 레벨업(필요XP=10*레벨), 물리 일시정지, 3개 선택지 랜덤
+- 선택지 UI: 화면 중앙 "LEVEL UP!" + 카드 3장(200x250px), 클릭→선택→게임 재개
+- 선택지 풀: 회전구슬+1(최대5), 번개(LightningWeapon.ts: 2초마다 랜덤 적 1마리에 DMG20 노란선), HP회복+20, 이동속도+10%, 자석범위+30%
+- 번개도 레벨업 가능 (대상 수 1→2→3)
+
+## M4: 보스 + 웨이브 + 결과
+- WaveSystem.ts: 3분 카운트다운, 기획서 시간별 스폰 규칙, 2:50에 일반 스폰 멈춤
+- Boss.ts (킹 슬라임): 큰 빨간 원(40px), HP300, 속도60, DMG20, HP50%↓ 시 슬라임 5마리 분열
+- 보스 HP바 화면 상단에 별도 표시
+- 게임 종료: 보스 처치→승리, HP 0→패배, 타이머0+보스 생존→패배
+- ResultScene.ts: 승리/패배, 스코어(처치수*10+남은HP*5+남은시간*2), [RETRY] 버튼
+
+## M5: 폴리시
+- 적 처치 파티클, 보스 데미지 시 카메라 쉐이크, 레벨업 플래시, 피격 빨간 tint
+- 타이틀 화면: "SURVIVOR DEFENSE" + [START] 버튼
+- 적 오브젝트 풀 최적화, 화면 밖 적 물리 스킵
+- 전체 3분 플레이 테스트 + 밸런스 체크
+
+모든 에셋은 기하학 도형(Graphics)으로 그려. 스프라이트 파일 불필요.
+Phaser 3 + TypeScript. 각 파일은 기획서의 프로젝트 구조(섹션 8A)를 따라.
+</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 터미널 2: Merge Battle TD 전체               -->
+<!-- ============================================ -->
+<div class="card">
+  <div class="card-header">
+    <span class="emoji">🏗️</span>
+    <span class="title">Terminal 2 — Merge Battle TD</span>
+    <span class="badge badge-merge">FULL BUILD</span>
+  </div>
+  <div class="card-body">
+    <p>머지 PvP 타워디펜스 프로토타입 전체를 한번에 구현합니다. 복사해서 Claude Code 터미널 2에 붙여넣으세요.</p>
+    <div class="prompt-box" id="prompt-merge">
+<button class="copy-btn" onclick="copyPrompt('prompt-merge')">Copy</button>
+Merge Battle TD 프로토타입 전체를 구현해줘.
+
+작업 디렉토리: /Users/jiwonkim/Desktop/kimjiwon/GameMaster/games/merge-battle-td
+기획서: GAME_DESIGN.md를 반드시 먼저 읽고 참고해.
+이미 Phaser 프로젝트 세팅 완료 (vite + phaser + ts). npm run dev로 실행 가능.
+
+아래 마일스톤을 M0부터 M6까지 순서대로 전부 구현해. 각 마일스톤 완료 시 npm run dev로 동작 확인하고 다음으로 넘어가.
+
+## M0: 그리드 + 경로 렌더링
+- BuildScene.ts: 800x600 화면
+- GridSystem.ts: 5x3 그리드(셀 80x80px), 2D 배열, 셀 좌표↔월드 좌표 변환, 셀 상태(empty|tower|path)
+- PathSystem.ts: S자 경로(웨이포인트 배열), 경로를 선으로 시각화, 경로 셀은 밝은 회색
+- 상단 HUD: "BUILD PHASE" + 30초 타이머(표시만)
+
+## M1: 타워 + 드래그 앤 드롭
+- Tower.ts: type(archer|cannon|slow), tier(1|2|3), 색상(초록/빨강/파랑), Tier별 크기(30/45/60px), Graphics 사각형+Tier 숫자
+- TowerFactory.ts: createRandomTower()로 Tier1 랜덤, 시작 시 5개 생성→하단 패널
+- DragDropSystem.ts: Phaser setDraggable, 드래그 중 셀 하이라이트(빈셀=초록, 경로=빨강), 드롭→빈셀 배치(스냅), 경로/밖→원위치, 배치된 타워도 재드래그 가능
+- 하단 패널: 타워 조각 5개 나란히 표시
+
+## M2: 머지 시스템
+- MergeSystem.ts: 같은type+같은tier→머지(Tier+1), 다른→위치 교환, Tier3 최대(머지불가→교환)
+- 머지 이펙트: 파티클 + scale 0→1 팝업 + 카메라 쉐이크
+- 하이라이트 업데이트: 머지가능=노란, 교환=파란
+- 타워 클릭 시 스탯 표시(DMG/사거리/공속)
+
+## M3: 적 이동 + 탈출 카운트
+- Enemy.ts: 고블린(빨간 원, HP30, 속도100), 늑대(보라 삼각형, HP15, 속도180), 트롤(회색 큰 원, HP120, 속도50), HP바 머리 위
+- 경로 웨이포인트를 순서대로 따라 이동, 마지막 도달=탈출(escaped+1)
+- WaveSystem.ts: 고블린x5→늑대x3→혼합x7→트롤x2→전체x10, 간격 0.8초
+- 탈출 카운트 HUD: "통과: 0/30"
+- 빌드→배틀 전환: [READY] 버튼 or 30초 타이머→전투 시작, 전투 중 드래그 비활성
+
+## M4: 타워 공격 + 투사체
+- CombatSystem.ts: 사거리 내 First 방식 타겟, 공속마다 투사체 발사
+- Projectile.ts: 흰 원(4px), 속도 400px/s, 적 도달→데미지+destroy
+- 타워별: 아처(단일, 빠름), 캐논(범위공격 반경50px, 느림), 슬로우(감속30/50/70%, 2초)
+- 타워 클릭 시 사거리 원 반투명 표시
+- 적 처치: 페이드아웃+파티클, 처치 카운터
+
+## M5: 페이즈 전환 + 결과
+- BUILD(30초, 타워 배치/머지) → "BATTLE START!" 연출(1초) → BATTLE(웨이브) → 결과
+- ResultScene.ts: 방어 성공률, 통과 적 수, 최고 Tier 타워, [RETRY]
+- 타이틀 화면: "MERGE BATTLE TD" + [START]
+
+## M6: 폴리시
+- 타워 배치 바운스, 머지 파티클, 적 처치 파티클, 투사체 충돌 폭발, 탈출 경고 플래시
+- 밸런스: 머지 안 하면 클리어 불가, Tier3 있으면 거의 클리어
+- 터치 지원: 모바일 드래그앤드롭 확인
+- 전체 플로우 테스트: 타이틀→빌드→배틀→결과→리트라이
+
+모든 에셋은 기하학 도형(Graphics)으로 그려. 스프라이트 파일 불필요.
+Phaser 3 + TypeScript. 각 파일은 기획서의 프로젝트 구조(섹션 9A)를 따라.
+타워 스탯은 기획서 섹션 5B 참고:
+- 아처: T1(DMG5,사거리3,공속1.0s) T2(12,3,0.8s) T3(30,4,0.5s)
+- 캐논: T1(DMG15,사거리2,공속2.0s,범위) T2(35,2,1.5s) T3(80,3,1.0s)
+- 슬로우: T1(DMG2,사거리2,감속30%) T2(5,3,50%) T3(10,3,70%)
+</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function copyPrompt(id) {
+  const box = document.getElementById(id);
+  const btn = box.querySelector('.copy-btn');
+  const clone = box.cloneNode(true);
+  clone.querySelector('.copy-btn').remove();
+  const text = clone.textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

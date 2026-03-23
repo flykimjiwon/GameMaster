@@ -1,0 +1,178 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774266231312,
+  "projectRoot": "/Users/jiwonkim/Desktop/kimjiwon/GameMaster",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "skills": {
+      "path": "skills",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1774266231307,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "SRPG_RESEARCH.md",
+      "accessCount": 1,
+      "lastAccessed": 1774266244524,
+      "type": "file"
+    },
+    {
+      "path": "CASUAL_DEFENSE_RESEARCH.md",
+      "accessCount": 1,
+      "lastAccessed": 1774266555994,
+      "type": "file"
+    },
+    {
+      "path": "DEFENSE_RESEARCH.md",
+      "accessCount": 1,
+      "lastAccessed": 1774266703284,
+      "type": "file"
+    },
+    {
+      "path": "CASUAL_SRPG_RESEARCH.md",
+      "accessCount": 1,
+      "lastAccessed": 1774266830659,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/GAME_DESIGN.md",
+      "accessCount": 1,
+      "lastAccessed": 1774270093026,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/GAME_DESIGN.md",
+      "accessCount": 1,
+      "lastAccessed": 1774270180186,
+      "type": "file"
+    },
+    {
+      "path": "SESSION_DASHBOARD.html",
+      "accessCount": 1,
+      "lastAccessed": 1774270374927,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 1,
+      "lastAccessed": 1774270456295,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1774270463059,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1774270464650,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1774270470044,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1774270471302,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/vite.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270472195,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/vite.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270472892,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1774270479856,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1774270481716,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/src/scenes/BootScene.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270483069,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/src/scenes/GameScene.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270485198,
+      "type": "file"
+    },
+    {
+      "path": "games/survivor-defense/src/main.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270487540,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/src/scenes/BootScene.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270488890,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/src/scenes/BuildScene.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270490449,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/src/main.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774270492048,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

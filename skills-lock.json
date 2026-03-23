@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "capability-evolver": {
+      "source": "autogame-17/capability-evolver",
+      "sourceType": "github",
+      "computedHash": "644654cfab745e9833fe8914abf569fd3dcc48f392c29faaecad96a7838b7793"
+    },
+    "game-engine": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "computedHash": "20057f62cf7a8b2d9f940b3de0b18e5426e8f4bb50e236d36b1033aa0d42c4d8"
+    }
+  }
+}

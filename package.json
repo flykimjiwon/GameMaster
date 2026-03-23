@@ -1,0 +1,7 @@
+{
+  "name": "gamemaster",
+  "private": true,
+  "workspaces": [
+    "games/*"
+  ]
+}

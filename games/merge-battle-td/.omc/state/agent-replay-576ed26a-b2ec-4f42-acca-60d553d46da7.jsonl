@@ -1,0 +1,8 @@
+{"t":0,"agent":"a04bd11","agent_type":"explore","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a4374cf","agent_type":"document-specialist","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a04bd11","agent_type":"explore","event":"agent_stop","success":true,"duration_ms":56014}
+{"t":0,"agent":"a4374cf","agent_type":"document-specialist","event":"agent_stop","success":true,"duration_ms":158383}
+{"t":0,"agent":"a252bd8","agent_type":"document-specialist","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a145020","agent_type":"document-specialist","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a252bd8","agent_type":"document-specialist","event":"agent_stop","success":true,"duration_ms":233890}
+{"t":0,"agent":"a145020","agent_type":"document-specialist","event":"agent_stop","success":true,"duration_ms":259440}
