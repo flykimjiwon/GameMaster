@@ -1,54 +1,110 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
+import { getAllThemes, setTheme, getTheme, ThemeId } from '../themes/ThemeSystem';
 
 export class TitleScene extends Phaser.Scene {
+  private selectedIdx = 0;
+  private themeButtons: Phaser.GameObjects.Container[] = [];
+
   constructor() {
     super({ key: 'TitleScene' });
   }
 
   create(): void {
     const cx = GAME_WIDTH / 2;
-    const cy = GAME_HEIGHT / 2;
+    const themes = getAllThemes();
+    const theme = getTheme();
 
     // Background
-    this.add.rectangle(cx, cy, GAME_WIDTH, GAME_HEIGHT, 0x0a0a1a);
+    this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, theme.background);
 
     // Title
-    this.add.text(cx, cy - 120, 'MERGE BATTLE TD', {
-      fontSize: '42px', color: '#44cc44', fontStyle: 'bold',
+    this.add.text(cx, 60, 'MERGE BATTLE TD', {
+      fontSize: '42px', color: theme.hudAccentColor, fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.add.text(cx, cy - 70, '머지 타워 디펜스', {
-      fontSize: '18px', color: '#88aa88',
+    this.add.text(cx, 105, '머지 타워 디펜스', {
+      fontSize: '18px', color: theme.hudTextColor,
     }).setOrigin(0.5);
 
-    // Decorative towers
-    const gfx = this.add.graphics();
-    const colors = [0x44cc44, 0xcc4444, 0x4488cc];
-    const sizes = [20, 25, 30];
-    for (let i = 0; i < 3; i++) {
-      const x = cx - 80 + i * 80;
-      const y = cy + 10;
-      gfx.fillStyle(colors[i], 0.8);
-      gfx.fillRect(x - sizes[i] / 2, y - sizes[i] / 2, sizes[i], sizes[i]);
-      gfx.lineStyle(2, 0xffffff, 0.5);
-      gfx.strokeRect(x - sizes[i] / 2, y - sizes[i] / 2, sizes[i], sizes[i]);
-    }
+    // Theme selector label
+    this.add.text(cx, 160, '▼ 테마 선택 ▼', {
+      fontSize: '14px', color: theme.hudTextColor,
+    }).setOrigin(0.5);
+
+    // Theme buttons
+    const btnWidth = 200;
+    const btnHeight = 80;
+    const startY = 200;
+    const spacing = 95;
+
+    themes.forEach((t, i) => {
+      const y = startY + i * spacing;
+      const isSelected = t.id === theme.id;
+
+      const btnBg = this.add.rectangle(0, 0, btnWidth, btnHeight, t.background)
+        .setStrokeStyle(isSelected ? 3 : 1, isSelected ? 0xffcc44 : 0x666666)
+        .setInteractive({ useHandCursor: true });
+
+      // Theme preview — small colored squares
+      const preview = this.add.graphics();
+      const previewColors = [
+        t.towerVisuals.archer.color,
+        t.towerVisuals.cannon.color,
+        t.towerVisuals.slow.color,
+      ];
+      previewColors.forEach((c, ci) => {
+        preview.fillStyle(c, 0.9);
+        preview.fillRect(-60 + ci * 30, -25, 22, 22);
+        preview.lineStyle(1, t.gridLineColor, 0.8);
+        preview.strokeRect(-60 + ci * 30, -25, 22, 22);
+      });
+
+      // Grid preview
+      preview.fillStyle(t.gridCellColor, t.gridCellAlpha);
+      preview.fillRect(20, -25, 22, 22);
+      preview.lineStyle(1, t.gridLineColor, t.gridLineAlpha);
+      preview.strokeRect(20, -25, 22, 22);
+
+      // Path preview
+      preview.fillStyle(t.pathColor, t.pathAlpha);
+      preview.fillRect(48, -25, 22, 22);
+
+      const nameText = this.add.text(0, 12, t.nameKo, {
+        fontSize: '14px', color: isSelected ? '#ffcc44' : '#ffffff', fontStyle: 'bold',
+      }).setOrigin(0.5);
+
+      const nameEn = this.add.text(0, 28, t.name, {
+        fontSize: '10px', color: '#999999',
+      }).setOrigin(0.5);
+
+      const container = this.add.container(cx, y, [btnBg, preview, nameText, nameEn]);
+      this.themeButtons.push(container);
+
+      btnBg.on('pointerover', () => {
+        if (this.selectedIdx !== i) btnBg.setStrokeStyle(2, 0xaaaaaa);
+      });
+      btnBg.on('pointerout', () => {
+        if (this.selectedIdx !== i) btnBg.setStrokeStyle(1, 0x666666);
+      });
+      btnBg.on('pointerdown', () => {
+        this.selectedIdx = i;
+        setTheme(t.id as ThemeId);
+        this.scene.restart();
+      });
+    });
 
     // Start button
-    const startBg = this.add.rectangle(cx, cy + 100, 200, 60, 0x44cc44).setInteractive({ useHandCursor: true });
-    this.add.text(cx, cy + 100, 'START', {
+    const startY2 = startY + themes.length * spacing + 20;
+    const startBg = this.add.rectangle(cx, startY2, 200, 55, 0x44cc44).setInteractive({ useHandCursor: true });
+    this.add.text(cx, startY2, 'START', {
       fontSize: '28px', color: '#ffffff', fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    // Pulse animation
     this.tweens.add({
       targets: startBg,
-      scaleX: 1.05,
-      scaleY: 1.05,
-      duration: 800,
-      yoyo: true,
-      repeat: -1,
+      scaleX: 1.05, scaleY: 1.05,
+      duration: 800, yoyo: true, repeat: -1,
       ease: 'Sine.easeInOut',
     });
 
@@ -57,8 +113,8 @@ export class TitleScene extends Phaser.Scene {
     startBg.on('pointerdown', () => this.scene.start('BuildScene'));
 
     // Version
-    this.add.text(cx, GAME_HEIGHT - 20, 'Prototype v0.1', {
-      fontSize: '12px', color: '#555555',
+    this.add.text(cx, GAME_HEIGHT - 15, 'Prototype v0.1', {
+      fontSize: '11px', color: '#555555',
     }).setOrigin(0.5);
   }
 }

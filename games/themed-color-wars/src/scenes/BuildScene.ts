@@ -1,0 +1,167 @@
+import Phaser from 'phaser';
+import { GridSystem } from '../systems/GridSystem';
+import { PathSystem } from '../systems/PathSystem';
+import { TowerFactory } from '../entities/TowerFactory';
+import { DragDropSystem } from '../systems/DragDropSystem';
+import { MergeSystem } from '../systems/MergeSystem';
+import { Tower } from '../entities/Tower';
+import {
+  GAME_WIDTH, BUILD_TIME, PANEL_Y, PANEL_HEIGHT, CELL_SIZE,
+  TOWER_STATS, TowerType,
+} from '../config';
+import { getTheme } from '../themes/ThemeSystem';
+
+export class BuildScene extends Phaser.Scene {
+  gridSystem!: GridSystem;
+  pathSystem!: PathSystem;
+  towerFactory!: TowerFactory;
+  dragDropSystem!: DragDropSystem;
+  mergeSystem!: MergeSystem;
+
+  towers: Map<string, Tower> = new Map();
+  panelTowers: Tower[] = [];
+
+  private timerText!: Phaser.GameObjects.Text;
+  private phaseText!: Phaser.GameObjects.Text;
+  private timeLeft = BUILD_TIME;
+  private timerEvent!: Phaser.Time.TimerEvent;
+  private readyButton!: Phaser.GameObjects.Container;
+  private isBattlePhase = false;
+  private statText!: Phaser.GameObjects.Text;
+  private rangeCircle!: Phaser.GameObjects.Graphics;
+
+  constructor() {
+    super({ key: 'BuildScene' });
+  }
+
+  create(): void {
+    this.towers.clear();
+    this.panelTowers = [];
+    this.isBattlePhase = false;
+    this.timeLeft = BUILD_TIME;
+    const theme = getTheme();
+
+    // Background
+    this.cameras.main.setBackgroundColor(theme.background);
+
+    // Systems
+    this.pathSystem = new PathSystem(this);
+    this.gridSystem = new GridSystem(this);
+    this.gridSystem.draw(this.pathSystem.pathCells);
+    this.pathSystem.draw();
+    this.mergeSystem = new MergeSystem(this);
+    this.towerFactory = new TowerFactory(this);
+    this.dragDropSystem = new DragDropSystem(this);
+
+    // Spawn initial towers in panel
+    this.towerFactory.spawnInitialTowers(5);
+
+    // HUD
+    this.createHUD();
+
+    // Panel background
+    this.add.rectangle(GAME_WIDTH / 2, PANEL_Y + PANEL_HEIGHT / 2, GAME_WIDTH, PANEL_HEIGHT, theme.panelBgColor, theme.panelBgAlpha)
+      .setDepth(0);
+
+    // Stat display
+    this.statText = this.add.text(GAME_WIDTH - 10, PANEL_Y + 10, '', {
+      fontSize: '12px', color: theme.hudTextColor, align: 'right',
+    }).setOrigin(1, 0).setDepth(100).setVisible(false);
+
+    // Range circle
+    this.rangeCircle = this.add.graphics().setDepth(5);
+
+    // Ready button
+    this.createReadyButton();
+  }
+
+  private createHUD(): void {
+    const theme = getTheme();
+    // Top bar
+    this.add.rectangle(GAME_WIDTH / 2, 25, GAME_WIDTH, 50, theme.hudBgColor, theme.hudBgAlpha).setDepth(90);
+    this.phaseText = this.add.text(20, 15, 'BUILD PHASE', {
+      fontSize: '22px', color: theme.hudAccentColor, fontStyle: 'bold',
+    }).setDepth(100);
+    this.timerText = this.add.text(GAME_WIDTH - 20, 15, `⏱ ${this.timeLeft}s`, {
+      fontSize: '22px', color: theme.hudTextColor,
+    }).setOrigin(1, 0).setDepth(100);
+
+    // Timer countdown
+    this.timerEvent = this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.timeLeft--;
+        this.timerText.setText(`⏱ ${this.timeLeft}s`);
+        if (this.timeLeft <= 5) {
+          this.timerText.setColor('#cc4444');
+        }
+        if (this.timeLeft <= 0) {
+          this.startBattle();
+        }
+      },
+      loop: true,
+    });
+  }
+
+  private createReadyButton(): void {
+    const bg = this.add.rectangle(0, 0, 120, 40, 0x44cc44, 1).setInteractive({ useHandCursor: true });
+    const text = this.add.text(0, 0, '▶ READY', {
+      fontSize: '16px', color: '#ffffff', fontStyle: 'bold',
+    }).setOrigin(0.5);
+    this.readyButton = this.add.container(GAME_WIDTH - 80, PANEL_Y + PANEL_HEIGHT / 2, [bg, text]).setDepth(100);
+    bg.on('pointerover', () => bg.setFillStyle(0x55dd55));
+    bg.on('pointerout', () => bg.setFillStyle(0x44cc44));
+    bg.on('pointerdown', () => this.startBattle());
+  }
+
+  startBattle(): void {
+    if (this.isBattlePhase) return;
+    this.isBattlePhase = true;
+    this.timerEvent.remove();
+    this.dragDropSystem.setEnabled(false);
+    this.readyButton.setVisible(false);
+    this.hideStats();
+
+    const towerData = Array.from(this.towers.values()).map(t => ({
+      type: t.towerType,
+      tier: t.tier,
+      col: t.gridCol,
+      row: t.gridRow,
+    }));
+
+    this.phaseText.setText('BATTLE START!').setColor('#ffcc00');
+    this.time.delayedCall(1000, () => {
+      this.scene.start('BattleScene', { towerData });
+    });
+  }
+
+  showStats(tower: Tower): void {
+    const theme = getTheme();
+    const tier = tower.tier;
+    const idx = tier - 1;
+    const tType: TowerType = tower.towerType;
+    const stats = TOWER_STATS[tType];
+    const names: Record<TowerType, string> = { archer: '노랑', cannon: '빨강', slow: '파랑' };
+    let text = `${names[tType]} T${tier}\n`;
+    text += `DMG: ${stats.dmg[idx]}\n`;
+    text += `사거리: ${stats.range[idx]}칸\n`;
+    text += `공속: ${stats.speed[idx]}s`;
+    if (stats.slowPct) text += `\n감속: ${stats.slowPct[idx]}%`;
+    if (stats.special === 'aoe') text += `\n범위공격`;
+    this.statText.setText(text).setVisible(true);
+
+    this.rangeCircle.clear();
+    const rangePx = stats.range[idx] * CELL_SIZE;
+    const worldPos = this.gridSystem.cellToWorld(tower.gridCol, tower.gridRow);
+    const towerVisual = theme.towerVisuals[tType];
+    this.rangeCircle.lineStyle(2, towerVisual.color, 0.3);
+    this.rangeCircle.fillStyle(towerVisual.color, 0.08);
+    this.rangeCircle.fillCircle(worldPos.x, worldPos.y, rangePx);
+    this.rangeCircle.strokeCircle(worldPos.x, worldPos.y, rangePx);
+  }
+
+  hideStats(): void {
+    this.statText.setVisible(false);
+    this.rangeCircle.clear();
+  }
+}

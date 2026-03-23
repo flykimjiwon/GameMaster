@@ -5,7 +5,8 @@ import { WaveSystem } from '../systems/WaveSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { Tower } from '../entities/Tower';
 import { Enemy } from '../entities/Enemy';
-import { TowerType, GAME_WIDTH, CELL_SIZE, TOTAL_ENEMIES, TOWER_COLORS, TOWER_STATS } from '../config';
+import { TowerType, GAME_WIDTH, CELL_SIZE, TOTAL_ENEMIES, TOWER_STATS } from '../config';
+import { getTheme } from '../themes/ThemeSystem';
 
 interface TowerData {
   type: TowerType;
@@ -28,7 +29,6 @@ export class BattleScene extends Phaser.Scene {
   private maxTierType: TowerType = 'archer';
 
   private escapedText!: Phaser.GameObjects.Text;
-  private phaseText!: Phaser.GameObjects.Text;
   private rangeGfx!: Phaser.GameObjects.Graphics;
   private statText!: Phaser.GameObjects.Text;
   private totalEnemies: number = TOTAL_ENEMIES;
@@ -44,12 +44,13 @@ export class BattleScene extends Phaser.Scene {
     this.killed = 0;
     this.maxTier = 1;
     this.maxTierType = 'archer';
-
-    // Store tower data for create
     this.registry.set('towerData', data.towerData);
   }
 
   create(): void {
+    const theme = getTheme();
+    this.cameras.main.setBackgroundColor(theme.background);
+
     // Rebuild systems
     this.pathSystem = new PathSystem(this);
     this.gridSystem = new GridSystem(this);
@@ -74,18 +75,18 @@ export class BattleScene extends Phaser.Scene {
     }
 
     // HUD
-    this.add.rectangle(GAME_WIDTH / 2, 25, GAME_WIDTH, 50, 0x0a0a1a, 0.9).setDepth(90);
-    this.phaseText = this.add.text(20, 15, 'BATTLE PHASE', {
+    this.add.rectangle(GAME_WIDTH / 2, 25, GAME_WIDTH, 50, theme.hudBgColor, theme.hudBgAlpha).setDepth(90);
+    this.add.text(20, 15, 'BATTLE PHASE', {
       fontSize: '22px', color: '#cc4444', fontStyle: 'bold',
     }).setDepth(100);
     this.escapedText = this.add.text(GAME_WIDTH - 20, 15, `통과: 0/${this.totalEnemies}`, {
-      fontSize: '20px', color: '#ffffff',
+      fontSize: '20px', color: theme.hudTextColor,
     }).setOrigin(1, 0).setDepth(100);
 
     // Range display on click
     this.rangeGfx = this.add.graphics().setDepth(5);
     this.statText = this.add.text(GAME_WIDTH - 10, 60, '', {
-      fontSize: '12px', color: '#ffffff', align: 'right',
+      fontSize: '12px', color: theme.hudTextColor, align: 'right',
     }).setOrigin(1, 0).setDepth(100).setVisible(false);
 
     this.input.on('gameobjectdown', (_ptr: Phaser.Input.Pointer, obj: Phaser.GameObjects.GameObject) => {
@@ -93,26 +94,25 @@ export class BattleScene extends Phaser.Scene {
         this.showRange(obj);
       }
     });
-    this.input.on('pointerdown', (_ptr: Phaser.Input.Pointer) => {
-      // Clear range on background click (will be overridden by tower click above)
-    });
 
     // Start wave
     this.waveSystem.start();
   }
 
   private showRange(tower: Tower): void {
+    const theme = getTheme();
     this.rangeGfx.clear();
     const stats = TOWER_STATS[tower.towerType];
     const idx = tower.tier - 1;
     const rangePx = stats.range[idx] * CELL_SIZE;
-    this.rangeGfx.lineStyle(2, TOWER_COLORS[tower.towerType], 0.3);
-    this.rangeGfx.fillStyle(TOWER_COLORS[tower.towerType], 0.08);
+    const towerVisual = theme.towerVisuals[tower.towerType];
+    this.rangeGfx.lineStyle(2, towerVisual.color, 0.3);
+    this.rangeGfx.fillStyle(towerVisual.color, 0.08);
     this.rangeGfx.fillCircle(tower.x, tower.y, rangePx);
     this.rangeGfx.strokeCircle(tower.x, tower.y, rangePx);
 
     const names: Record<TowerType, string> = { archer: '아처', cannon: '캐논', slow: '슬로우' };
-    let text = `${names[tower.towerType]} T${tower.tier}\nDMG: ${stats.dmg[idx]}`;
+    const text = `${names[tower.towerType]} T${tower.tier}\nDMG: ${stats.dmg[idx]}`;
     this.statText.setText(text).setVisible(true);
 
     this.time.delayedCall(2000, () => {
@@ -148,7 +148,6 @@ export class BattleScene extends Phaser.Scene {
           this.escapedText.setColor('#cc4444');
         }
 
-        // Escape flash
         this.cameras.main.flash(100, 255, 50, 50);
         enemy.destroy();
         continue;

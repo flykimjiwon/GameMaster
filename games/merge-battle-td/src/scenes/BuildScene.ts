@@ -7,8 +7,9 @@ import { MergeSystem } from '../systems/MergeSystem';
 import { Tower } from '../entities/Tower';
 import {
   GAME_WIDTH, BUILD_TIME, PANEL_Y, PANEL_HEIGHT, CELL_SIZE,
-  TOWER_STATS, TOWER_COLORS, TowerType,
+  TOWER_STATS, TowerType,
 } from '../config';
+import { getTheme } from '../themes/ThemeSystem';
 
 export class BuildScene extends Phaser.Scene {
   gridSystem!: GridSystem;
@@ -38,6 +39,10 @@ export class BuildScene extends Phaser.Scene {
     this.panelTowers = [];
     this.isBattlePhase = false;
     this.timeLeft = BUILD_TIME;
+    const theme = getTheme();
+
+    // Background
+    this.cameras.main.setBackgroundColor(theme.background);
 
     // Systems
     this.pathSystem = new PathSystem(this);
@@ -55,12 +60,12 @@ export class BuildScene extends Phaser.Scene {
     this.createHUD();
 
     // Panel background
-    this.add.rectangle(GAME_WIDTH / 2, PANEL_Y + PANEL_HEIGHT / 2, GAME_WIDTH, PANEL_HEIGHT, 0x1a1a2a, 0.9)
+    this.add.rectangle(GAME_WIDTH / 2, PANEL_Y + PANEL_HEIGHT / 2, GAME_WIDTH, PANEL_HEIGHT, theme.panelBgColor, theme.panelBgAlpha)
       .setDepth(0);
 
     // Stat display
     this.statText = this.add.text(GAME_WIDTH - 10, PANEL_Y + 10, '', {
-      fontSize: '12px', color: '#ffffff', align: 'right',
+      fontSize: '12px', color: theme.hudTextColor, align: 'right',
     }).setOrigin(1, 0).setDepth(100).setVisible(false);
 
     // Range circle
@@ -71,13 +76,14 @@ export class BuildScene extends Phaser.Scene {
   }
 
   private createHUD(): void {
+    const theme = getTheme();
     // Top bar
-    this.add.rectangle(GAME_WIDTH / 2, 25, GAME_WIDTH, 50, 0x0a0a1a, 0.9).setDepth(90);
+    this.add.rectangle(GAME_WIDTH / 2, 25, GAME_WIDTH, 50, theme.hudBgColor, theme.hudBgAlpha).setDepth(90);
     this.phaseText = this.add.text(20, 15, 'BUILD PHASE', {
-      fontSize: '22px', color: '#44cc44', fontStyle: 'bold',
+      fontSize: '22px', color: theme.hudAccentColor, fontStyle: 'bold',
     }).setDepth(100);
     this.timerText = this.add.text(GAME_WIDTH - 20, 15, `⏱ ${this.timeLeft}s`, {
-      fontSize: '22px', color: '#ffffff',
+      fontSize: '22px', color: theme.hudTextColor,
     }).setOrigin(1, 0).setDepth(100);
 
     // Timer countdown
@@ -116,7 +122,6 @@ export class BuildScene extends Phaser.Scene {
     this.readyButton.setVisible(false);
     this.hideStats();
 
-    // Transition to BattleScene, pass tower data
     const towerData = Array.from(this.towers.values()).map(t => ({
       type: t.towerType,
       tier: t.tier,
@@ -124,14 +129,14 @@ export class BuildScene extends Phaser.Scene {
       row: t.gridRow,
     }));
 
-    // Battle start animation
     this.phaseText.setText('BATTLE START!').setColor('#ffcc00');
     this.time.delayedCall(1000, () => {
-      this.scene.start('BattleScene', { towerData, pathSystem: this.pathSystem });
+      this.scene.start('BattleScene', { towerData });
     });
   }
 
   showStats(tower: Tower): void {
+    const theme = getTheme();
     const tier = tower.tier;
     const idx = tier - 1;
     const tType: TowerType = tower.towerType;
@@ -145,12 +150,12 @@ export class BuildScene extends Phaser.Scene {
     if (stats.special === 'aoe') text += `\n범위공격`;
     this.statText.setText(text).setVisible(true);
 
-    // Range circle
     this.rangeCircle.clear();
     const rangePx = stats.range[idx] * CELL_SIZE;
     const worldPos = this.gridSystem.cellToWorld(tower.gridCol, tower.gridRow);
-    this.rangeCircle.lineStyle(2, TOWER_COLORS[tType], 0.3);
-    this.rangeCircle.fillStyle(TOWER_COLORS[tType], 0.08);
+    const towerVisual = theme.towerVisuals[tType];
+    this.rangeCircle.lineStyle(2, towerVisual.color, 0.3);
+    this.rangeCircle.fillStyle(towerVisual.color, 0.08);
     this.rangeCircle.fillCircle(worldPos.x, worldPos.y, rangePx);
     this.rangeCircle.strokeCircle(worldPos.x, worldPos.y, rangePx);
   }
