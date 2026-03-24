@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameMaster - 31 Game Concepts Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --card-hover: #1a1a28;
+    --border: #1e1e2e;
+    --text: #e0e0e8;
+    --text-dim: #7a7a8e;
+    --accent-defense: #ff6b35;
+    --accent-defense-dim: #ff6b3520;
+    --accent-srpg: #6c5ce7;
+    --accent-srpg-dim: #6c5ce720;
+    --accent-langrisser: #00b894;
+    --accent-jeanne: #fd79a8;
+    --gold: #ffd700;
+    --fresh: #00cec9;
+    --addictive: #e17055;
+    --easy: #55efc4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    padding: 80px 40px 60px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, var(--accent-defense-dim) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, var(--accent-srpg-dim) 0%, transparent 50%);
+    animation: heroPulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes heroPulse {
+    0% { opacity: 0.4; transform: scale(1); }
+    100% { opacity: 0.8; transform: scale(1.1); }
+  }
+  .hero h1 {
+    position: relative;
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--accent-defense), var(--accent-srpg));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    position: relative;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+  .hero .stats-row {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .hero .stat {
+    text-align: center;
+  }
+  .hero .stat-num {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .hero .stat-num.defense { color: var(--accent-defense); }
+  .hero .stat-num.srpg { color: var(--accent-srpg); }
+  .hero .stat-num.total { background: linear-gradient(135deg, var(--accent-defense), var(--accent-srpg)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  /* ===== FILTERS ===== */
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 40px 40px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 10px 24px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: var(--card);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .filter-btn:hover { border-color: var(--text-dim); color: var(--text); }
+  .filter-btn.active { background: var(--accent-defense); border-color: var(--accent-defense); color: #fff; }
+  .filter-btn.active.srpg { background: var(--accent-srpg); border-color: var(--accent-srpg); }
+  .filter-btn.active.all { background: linear-gradient(135deg, var(--accent-defense), var(--accent-srpg)); border-color: transparent; }
+
+  /* ===== SECTION HEADERS ===== */
+  .section-header {
+    padding: 40px 40px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-header .icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  .section-header .icon.defense { background: var(--accent-defense-dim); }
+  .section-header .icon.srpg { background: var(--accent-srpg-dim); }
+  .section-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .section-header .count {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  /* ===== CARD GRID ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    padding: 0 40px 40px;
+  }
+
+  /* ===== GAME CARD ===== */
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-card:hover {
+    background: var(--card-hover);
+    border-color: #2a2a3e;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+  .game-card.defense:hover { border-color: var(--accent-defense); box-shadow: 0 20px 40px rgba(255,107,53,0.1); }
+  .game-card.srpg:hover { border-color: var(--accent-srpg); box-shadow: 0 20px 40px rgba(108,92,231,0.1); }
+  .game-card.priority { border: 2px solid #ff4757; background: linear-gradient(135deg, #1a0a0f, #12121a); }
+  .game-card.priority:hover { border-color: #ff6b81; box-shadow: 0 20px 60px rgba(255,71,87,0.2); }
+  .game-card.priority::after { content: '1ST PICK'; position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg,#ff4757,#ff6b35); color: #fff; font-size: 0.6rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; }
+  .card-id.priority { background: linear-gradient(135deg,#ff475730,#ff6b3530); color: #ff4757; }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-id {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+  }
+  .card-id.defense { background: var(--accent-defense-dim); color: var(--accent-defense); }
+  .card-id.srpg { background: var(--accent-srpg-dim); color: var(--accent-srpg); }
+
+  .card-badges {
+    display: flex;
+    gap: 6px;
+  }
+  .badge {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge.blue-ocean { background: #0984e320; color: #74b9ff; }
+  .badge.langrisser { background: #00b89420; color: var(--accent-langrisser); }
+  .badge.jeanne { background: #fd79a820; color: var(--accent-jeanne); }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .card-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .card-stat {
+    text-align: center;
+  }
+  .card-stat-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .card-stat-bar {
+    height: 6px;
+    background: #1a1a2a;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 2px;
+  }
+  .card-stat-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .card-stat-fill.fresh { background: linear-gradient(90deg, #00cec9, #55efc4); }
+  .card-stat-fill.addictive { background: linear-gradient(90deg, #e17055, #fdcb6e); }
+  .card-stat-fill.competition { background: linear-gradient(90deg, #6c5ce7, #a29bfe); }
+
+  .card-stat-value {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .dev-time {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+  .dev-time strong {
+    color: var(--text);
+  }
+  .difficulty {
+    display: flex;
+    gap: 3px;
+  }
+  .difficulty .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2a2a3e;
+  }
+  .difficulty .dot.filled { background: var(--gold); }
+
+  .card-tech {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .tech-tag {
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #1a1a2a;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* ===== RECOMMENDATION SECTION ===== */
+  .reco-section {
+    padding: 60px 40px;
+  }
+  .reco-section h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .reco-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .reco-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s;
+  }
+  .reco-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+  }
+  .reco-emoji {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  .reco-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .reco-picks {
+    font-size: 0.85rem;
+    color: var(--accent-defense);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .reco-picks.srpg { color: var(--accent-srpg); }
+  .reco-picks.mixed { background: linear-gradient(90deg, var(--accent-defense), var(--accent-srpg)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .reco-desc {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ===== EXPANDED CARD (MODAL) ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 40px;
+    position: relative;
+    animation: modalIn 0.3s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-dim);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--border); color: var(--text); }
+  .modal-content h2 { font-size: 1.6rem; margin-bottom: 8px; }
+  .modal-content .modal-sub { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; }
+  .modal-content h3 { font-size: 1rem; font-weight: 700; margin: 20px 0 10px; color: var(--fresh); }
+  .modal-content p, .modal-content li { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+  .modal-content ul { padding-left: 20px; margin-bottom: 12px; }
+  .modal-content .flow-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 0.8rem;
+    color: var(--text);
+    margin: 10px 0 16px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .modal-refs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .modal-ref {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #1a1a2a;
+    color: var(--text-dim);
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3a4e; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero { padding: 60px 20px 40px; }
+    .card-grid { padding: 0 16px 16px; grid-template-columns: 1fr; }
+    .filters { padding: 0 16px 20px; }
+    .section-header { padding: 30px 16px 16px; }
+    .reco-section { padding: 40px 16px; }
+    .modal-content { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>GameMaster Concepts</h1>
+  <p class="subtitle">31 game concepts, handcrafted for web casual gaming</p>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num" style="color:#ff4757">1</div>
+      <div class="stat-label">Priority Pick</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num defense">15</div>
+      <div class="stat-label">Defense</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num srpg">15</div>
+      <div class="stat-label">SRPG / War Sim</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num total">31</div>
+      <div class="stat-label">Total Concepts</div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-btn active all" onclick="filterCards('all')">All 31</button>
+  <button class="filter-btn" onclick="filterCards('defense')">Defense (15)</button>
+  <button class="filter-btn" onclick="filterCards('srpg')">SRPG (15)</button>
+  <button class="filter-btn" onclick="filterCards('blueocean')">Blue Ocean</button>
+  <button class="filter-btn" onclick="filterCards('langrisser')">Langrisser</button>
+  <button class="filter-btn" onclick="filterCards('jeanne')">Jeanne d'Arc</button>
+  <button class="filter-btn" onclick="filterCards('quick')">2-3 Week Build</button>
+</div>
+
+<!-- PRIORITY PICK -->
+<div class="section-header" id="priority-section">
+  <div class="icon defense" style="background:linear-gradient(135deg,#ff4757,#ff6b35);position:relative">&#x2B50;</div>
+  <h2 style="background:linear-gradient(90deg,#ff4757,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent">1st Priority Pick</h2>
+  <span class="count" style="border-color:#ff4757;color:#ff4757">TOP PICK</span>
+</div>
+
+<div class="card-grid" id="priority-grid"></div>
+
+<!-- DEFENSE SECTION -->
+<div class="section-header" id="defense-section">
+  <div class="icon defense">&#x1f3f0;</div>
+  <h2>Defense Games</h2>
+  <span class="count">15 concepts</span>
+</div>
+
+<div class="card-grid" id="defense-grid"></div>
+
+<!-- SRPG SECTION -->
+<div class="section-header" id="srpg-section">
+  <div class="icon srpg">&#x2694;&#xfe0f;</div>
+  <h2>SRPG / War Simulation</h2>
+  <span class="count">15 concepts</span>
+</div>
+
+<div class="card-grid" id="srpg-grid"></div>
+
+<!-- RECOMMENDATIONS -->
+<section class="reco-section">
+  <h2>Recommended Picks</h2>
+  <div class="reco-grid">
+    <div class="reco-card">
+      <div class="reco-emoji">&#x26a1;</div>
+      <div class="reco-title">Fastest to Ship</div>
+      <div class="reco-picks mixed">S15 One Line War / S2 Emoji Army</div>
+      <div class="reco-desc">1-2 weeks, minimal assets, maximum fun. Perfect first game to learn the pipeline.</div>
+    </div>
+    <div class="reco-card">
+      <div class="reco-emoji">&#x1f4a1;</div>
+      <div class="reco-title">Most Innovative</div>
+      <div class="reco-picks">D7 Tetris TD / S12 Time Loop Tactics</div>
+      <div class="reco-desc">Zero web competition. Tetris+TD is unexplored. Time loop cooperation is unique.</div>
+    </div>
+    <div class="reco-card">
+      <div class="reco-emoji">&#x1f525;</div>
+      <div class="reco-title">Highest Retention</div>
+      <div class="reco-picks">D9 Adaptive Defense / S9 Skill Alchemy</div>
+      <div class="reco-desc">Enemies that learn, recipes to discover. Players never run out of things to do.</div>
+    </div>
+    <div class="reco-card">
+      <div class="reco-emoji">&#x1f4e3;</div>
+      <div class="reco-title">Viral Potential</div>
+      <div class="reco-picks srpg">S14 Alliance & Betrayal / D6 Draw Defense</div>
+      <div class="reco-desc">Friendship destroyer game = SNS viral. "Look at my defense drawing!" = shares.</div>
+    </div>
+    <div class="reco-card">
+      <div class="reco-emoji">&#x1f451;</div>
+      <div class="reco-title">Langrisser / Jeanne d'Arc Fans</div>
+      <div class="reco-picks srpg">S6 Commander Wars / S7 Aura Chain</div>
+      <div class="reco-desc">Commander+soldiers system compressed to 1-min auto-battle. Burning aura as puzzle.</div>
+    </div>
+    <div class="reco-card">
+      <div class="reco-emoji">&#x1f3af;</div>
+      <div class="reco-title">Tech Challenge (Growth)</div>
+      <div class="reco-picks">D12 Slime Flood / D11 Factory TD</div>
+      <div class="reco-desc">Fluid physics simulation. Conveyor belt automation. Push your engineering skills.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-content" id="modal-body" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')">&times;</button>
+    <div id="modal-inner"></div>
+  </div>
+</div>
+
+<script>
+const concepts = [
+  // ===== PRIORITY PICK =====
+  {
+    id: "★", type: "priority", title: "Mirror Defense Duel", titleKo: "PvP 대칭 디펜스",
+    subtitle: "같은 재료, 다른 전략, 서로의 방어진을 뚫어라",
+    desc: "양쪽이 똑같은 타워+공격유닛 재료를 받고 60초 안에 동시 배치. 시작하면 내 공격유닛이 상대 방어진을 뚫고, 상대 공격유닛이 내 방어진을 뚫음. 먼저 뚫린 쪽이 패배. 순수 전략 대결.",
+    flow: "1. 1:1 매칭 (또는 친구 초대)\n2. 양쪽 동일 재료 지급 (타워+벽+공격유닛)\n3. 60초 배치: 상반=방어 구역, 하반=공격 편대\n4. 핵심 딜레마: 방어에 쓸까? 공격에 쓸까?\n5. 전투 시작(30초): 화면 분할로 양쪽 동시 진행\n6. 먼저 기지 돌파 → 승리 / 시간초과 → HP 비교\n7. 서든데스: 벽 자동 파괴 시작",
+    whyNew: ["같은 재료 → 순수 전략 차이로 승패 (체스와 같은 공정성)", "방어+공격 동시 준비 = 기존 TD에 없는 차원", "상대 배치를 모르는 상태에서 심리전", "웹 브라우저 PvP 대칭 TD = 전무 (완전 블루 오션)", "미로빌더(D1) + 역전TD(D14) + Clash Royale의 결합"],
+    addiction: ["자원 배분 딜레마: '타워 1개 줄이고 기마 추가?'", "상대 읽기: '방어형일까 공격형일까?' 심리전", "리플레이로 내 공격이 미로 뚫는 순간 = 쾌감 폭발", "트로피 랭킹 → '한 판만 더!' 무한 루프", "친구 대전 → '내 방어 뚫어봐!' = 우정 파괴 바이럴"],
+    monetize: "배틀 패스 ($4.99/시즌), 코스메틱 IAP (타워/유닛 스킨), 리워드 광고 (배치 +15초), 시즌 이벤트",
+    refs: ["Clash Royale (2억 MAU)", "Legion TD 2 (Steam)", "Bloons TD Battles", "체스 (동일 재료 전략 원조)"],
+    tech: ["Phaser 3", "Colyseus (실시간)", "PathFinding.js", "ELO 매칭"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "4-5주", difficulty: 4, tags: ["blueocean", "priority"]
+  },
+
+  // ===== DEFENSE =====
+  {
+    id: "D1", type: "defense", title: "Maze Builder TD", titleKo: "Maze Builder TD",
+    subtitle: "Build the maze, control the path",
+    desc: "Tower placement creates walls that redirect enemies. Build the longest path possible. Every layout is a new puzzle.",
+    flow: "1. Place towers before wave (enemy path preview in real-time)\n2. Wave starts: enemies navigate your maze\n3. Wave clear: earn gold, expand/upgrade maze\n4. Boss wave: boss smashes walls, emergency rebuild!",
+    whyNew: ["Player creates the path (not fixed routes)", "Every game = different maze = infinite replay", "No maze-builder TD on web (market gap)"],
+    addiction: ["Path optimization obsession", "Instant visual feedback on path changes", "Maze screenshot sharing = SNS viral"],
+    monetize: "Rewarded ads (extra gold), premium tower skins, weekly challenge maps",
+    refs: ["AMazing TD", "Tower Maze Defense (Steam)"],
+    tech: ["Phaser 3", "PathFinding.js", "Kenney TD Kit"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean"]
+  },
+  {
+    id: "D2", type: "defense", title: "One Tower Idle", titleKo: "One Tower Idle",
+    subtitle: "One tower, infinite upgrades",
+    desc: "Only ONE tower exists. Pure upgrade decisions. Auto-fire, auto-collect. Offline gold accumulation. Prestige system for infinite loop.",
+    flow: "1. Tower auto-shoots enemies\n2. Enemies drop gold (auto-collect)\n3. Upgrade: attack/range/speed/special\n4. Every 10 waves: boss + prestige choice\n5. Offline gold accumulation",
+    whyNew: ["Removes 'where to place' decision entirely", "The Tower (mobile) proved formula, no web version", "Idle DAU/MAU 18% vs hypercasual 10.5%"],
+    addiction: ["Offline progress = daily check-in", "'Just one more wave' loop", "Prestige reset = infinite growth cycle"],
+    monetize: "Rewarded ads (2x gold, offline boost), VIP subscription ($2.99/mo), special weapon IAP",
+    refs: ["The Tower (mobile)", "Idle game market $2.5B"],
+    tech: ["Phaser 3", "BigNumber.js", "localForage"],
+    fresh: 3, addictive: 5, competition: 4, devTime: "2-3 weeks", difficulty: 2, tags: ["quick"]
+  },
+  {
+    id: "D3", type: "defense", title: "Beat Defense", titleKo: "Beat Defense",
+    subtitle: "Rhythm meets tower defense",
+    desc: "Towers fire on the beat. Tap in rhythm for critical damage. Music genre changes = gameplay changes. Fail rhythm? Tower still fires basic.",
+    flow: "1. BGM starts, enemies march to the beat\n2. Towers auto-fire (base damage)\n3. Player taps on beat = critical hit (2-3x)\n4. Combo streak = special skill charge\n5. Stage = one song (3-4 min)",
+    whyNew: ["Rhythm + TD = virtually unexplored", "Music IS the mechanic (no separate BGM needed)", "Rhythm fail ≠ game fail (zero pressure)"],
+    addiction: ["Full combo satisfaction", "Music stuck in head after playing", "'Must S-rank this song' retry drive"],
+    monetize: "Music pack IAP ($1.99/pack), rewarded ads (special towers), seasonal music festivals",
+    refs: ["Bass Defense (Steam 2025)", "Web competition: NONE"],
+    tech: ["Phaser 3", "Web Audio API", "Tone.js"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean"]
+  },
+  {
+    id: "D4", type: "defense", title: "Kitchen Defense", titleKo: "Kitchen Defense",
+    subtitle: "Korean food as your weapon",
+    desc: "Hungry monsters attack! Kitchen appliances are towers. Complete recipes to throw food at enemies. Tteokbokki tower, Kimchi AOE, Samgyeopsal fire!",
+    flow: "1. Place kitchen: stove, fridge, frying pan on grid\n2. Auto-gather ingredients, auto-cook recipes\n3. Finished food auto-throws at monsters\n4. Better recipes = stronger attacks\n5. Maze-like kitchen layout extends paths",
+    whyNew: ["Cooking + TD = only Kitchen Crisis exists (not casual)", "Korean food theme = unique identity", "Non-gamers understand cooking instantly"],
+    addiction: ["Recipe unlock collection", "Food combination experiments", "Cute visuals + Korean food = sharing urge"],
+    monetize: "Premium recipes IAP, rewarded ads (rare ingredients), seasonal events",
+    refs: ["Kitchen Crisis (Steam)", "Cooking game market CAGR 6.6%"],
+    tech: ["Phaser 3", "PathFinding.js", "Pixelorama pixel food"],
+    fresh: 4, addictive: 4, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "D5", type: "defense", title: "Roguelike Merge TD", titleKo: "Roguelike Merge TD",
+    subtitle: "Merge + roguelike + tower defense",
+    desc: "Pick random towers between waves. Merge same towers for upgrades. Fire+Fire=Firestorm, Fire+Ice=Steam Tower. Die = meta upgrade + restart.",
+    flow: "1. Wave → enemies attack\n2. Wave clear → pick 1 of 3 random towers\n3. Drag same towers to merge (upgrade)\n4. Synergies: Fire+Ice=Steam, etc.\n5. Death → meta upgrades (start gold+, 4 choices)",
+    whyNew: ["Merge(2048) + Roguelike(Vampire Survivors) + TD triple-cross", "Random Dice proved merge+TD, roguelike runs are new", "Every run is different = infinite replay"],
+    addiction: ["'This run, I'll try THIS combo' experimentation", "Surprise evolution on merge = variable reward", "Death = permanent growth (no wasted runs)", "Synergy discovery dopamine"],
+    monetize: "Rewarded ads (revive/reroll), battle pass ($4.99/season), cosmetic tower skins",
+    refs: ["Random Dice", "GNOMES (2025)", "Vampire Survivors"],
+    tech: ["Phaser 3", "bitECS", "simplex-noise"],
+    fresh: 4, addictive: 5, competition: 3, devTime: "4-5 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "D6", type: "defense", title: "Draw Defense", titleKo: "Draw Defense",
+    subtitle: "Draw walls with your finger",
+    desc: "Draw lines to create walls and attack lines. Line length = damage, thickness = durability. Ink is your resource — draw efficiently to survive.",
+    flow: "1. Start with ink gauge\n2. Draw walls/attack lines on the field\n3. Enemies hit walls: wall HP consumed + damage\n4. Shapes matter: line=pierce, circle=AOE, zigzag=slow\n5. Ink depletes → kill enemies to refill\n6. Boss: smashes walls → real-time redraw",
+    whyNew: ["Touch/mouse native — no buttons needed", "Draw Defense (CrazyGames) proved concept, lacks depth", "Every drawing is unique strategy"],
+    addiction: ["Drawing itself is satisfying (ASMR + strategy)", "Pattern optimization obsession", "Share drawings on SNS"],
+    monetize: "Ink color/effect skins IAP, rewarded ads (ink bonus), daily challenges",
+    refs: ["Draw Defense (CrazyGames)", "Flight (thatgamecompany)"],
+    tech: ["Phaser 3", "Canvas 2D API", "SAT.js"],
+    fresh: 4, addictive: 4, competition: 3, devTime: "2-3 weeks", difficulty: 2, tags: ["quick"]
+  },
+  {
+    id: "D7", type: "defense", title: "Tetris TD", titleKo: "Tetris TD",
+    subtitle: "Tetris blocks = maze + towers",
+    desc: "Tetris blocks fall from above. Place them to create terrain AND towers simultaneously. Line clear = AOE explosion attack. Block reaches ceiling = game over.",
+    flow: "1. Tetris blocks descend\n2. Move/rotate to place\n3. Placed block = wall (path change) + tower (auto-fire)\n4. Complete line → explosion attack (Tetris line clear)\n5. Enemies try to pass through gaps\n6. Blocks reach ceiling → game over",
+    whyNew: ["Tetris + TD = UNEXPLORED combination", "Everyone knows Tetris controls = zero learning cost", "Line clear = AOE attack is intuitive connection"],
+    addiction: ["Tetris 'just one more line' addiction", "Dual satisfaction: maze strategy + puzzle", "T-spin line clear = special attack (skill expression)"],
+    monetize: "Block skins IAP (neon/retro/space), rewarded ads (next-block preview), weekly ranking",
+    refs: ["Tetris (500M+ users)", "Emberward (tile TD concept)"],
+    tech: ["Phaser 3", "Custom SRS engine", "PathFinding.js"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean"]
+  },
+  {
+    id: "D8", type: "defense", title: "Weather Defense", titleKo: "Weather Defense",
+    subtitle: "Control weather to fight enemies",
+    desc: "No towers — control weather zones instead. Rain+Lightning=electrocute, Sun+Rain=rainbow buff, Wind+Snow=blizzard. Weather combinations create chain reactions.",
+    flow: "1. Four weather cards: Sun, Rain, Snow, Wind\n2. Drag card to map zone → weather changes\n3. Enemies entering zone take weather effects\n4. Combos: Rain+Snow=ice floor, Sun+Rain=rainbow\n5. Mana sustains weather — mana runs out, weather fades\n6. Upgrade weather cards between waves",
+    whyNew: ["Tower-less TD — weather = area debuff system", "Weather combos = chemistry reaction discovery", "Visually stunning (rain, snow, lightning FX)"],
+    addiction: ["'I discovered rain+lightning combo!' alchemy feel", "Weather FX = visual satisfaction", "Area control = chess-like spatial reading"],
+    monetize: "Premium weather (aurora, meteor shower) IAP, rewarded ads (mana), seasonal events",
+    refs: ["Horizon: Siegebreak", "Doodle God (element combo)"],
+    tech: ["Phaser 3", "Particle Emitter", "JSON recipe table"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean"]
+  },
+  {
+    id: "D9", type: "defense", title: "Adaptive Defense", titleKo: "Adaptive Defense",
+    subtitle: "Enemies learn YOUR strategy",
+    desc: "Enemies evolve to counter your tower choices. Use 70% fire towers? Cold-shield enemies appear. No fixed meta — constant adaptation required.",
+    flow: "1. Place towers → clear first wave\n2. Enemy AI analyzes: 'Fire towers 60% usage'\n3. Next wave: fire-resistant enemies mixed in\n4. Player responds: add ice towers\n5. Enemy AI: 'Ice towers rising' → cold-immune units\n6. Enemy evolution log displayed",
+    whyNew: ["Enemies that LEARN (not scripted waves)", "No fixed meta = always challenging", "'I change, they change' = endless mind game"],
+    addiction: ["'They read my strategy!' tension", "Evolution log = observe AI learning", "Balance breaking impossible = always challenging"],
+    monetize: "Rewarded ads (evolution preview), premium campaigns, skins",
+    refs: ["Left 4 Dead AI Director", "Nomad Tower X"],
+    tech: ["Phaser 3", "Behavior tracking AI", "Weighted unit spawner"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "4-5 weeks", difficulty: 4, tags: ["blueocean"]
+  },
+  {
+    id: "D10", type: "defense", title: "Card Builder TD", titleKo: "Card Builder TD",
+    subtitle: "Slay the Spire meets tower defense",
+    desc: "Draw cards instead of placing towers. 3 cards per wave, pick 1. Card combos create synergies. Roguelike runs with meta deckbuilding.",
+    flow: "1. Start deck: 10 basic cards\n2. Draw 3 per wave → play 1\n3. Cards: spawn tower, cast spell, change terrain\n4. Synergy: 3+ fire cards = auto firestorm\n5. Wave clear → new card reward (1 of 3)\n6. Run ends → permanent card unlocks",
+    whyNew: ["Slay the Spire + TD = deckbuilding strategy + tower placement", "Shapebreaker (Steam) proved concept, no web casual version", "Card collection + TD strategy = double addiction"],
+    addiction: ["'Will I get the rare card this run?' gacha psychology", "Synergy discovery surprises", "Card collection compendium", "Every run = different deck"],
+    monetize: "Premium card packs IAP, battle pass (seasonal cards), rewarded ads (reroll/extra draw)",
+    refs: ["Slay the Spire", "Shapebreaker (Steam)"],
+    tech: ["Phaser 3", "JSON card schema", "Drag-and-drop card UI"],
+    fresh: 4, addictive: 5, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "D11", type: "defense", title: "Factory TD", titleKo: "Factory TD",
+    subtitle: "Mine, process, automate, defend",
+    desc: "Mine raw materials → process → assemble towers automatically. Conveyor belts transport resources. Design factory AND defense simultaneously.",
+    flow: "1. Map has ore nodes\n2. Place miners → auto-harvest raw materials\n3. Conveyor belts transport to processors\n4. Processor: iron ore→plates, copper→wires\n5. Assembler: plates+wires→turret (auto-placed)\n6. Enemies target factory → defend production!",
+    whyNew: ["Mindustry proved factory+TD, no ultra-casual web version", "Factorio 10M+ fans — that satisfaction in 5 minutes", "Completed automation = 'watch it work' zen"],
+    addiction: ["Belts running, towers auto-spawning = automation zen", "'Can I make a more efficient line?' optimization", "Enemies breaking lines = emergency repair tension"],
+    monetize: "Premium recipes IAP, rewarded ads (resource boost), factory screenshot sharing",
+    refs: ["Mindustry (open-source)", "Factorio ($27M revenue)"],
+    tech: ["Phaser 3", "Tile-based item movement", "DAG resource graph"],
+    fresh: 4, addictive: 5, competition: 3, devTime: "4-5 weeks", difficulty: 4, tags: []
+  },
+  {
+    id: "D12", type: "defense", title: "Slime Flood Defense", titleKo: "Slime Flood Defense",
+    subtitle: "Enemies are LIQUID, not units",
+    desc: "Instead of enemy units, a physics-based slime floods toward your base. Build dams, dig drainage, install heaters to evaporate, or freezers to solidify.",
+    flow: "1. Slime flows from map edge (physics sim)\n2. Build dams → block flow\n3. Dig drainage → redirect to safe zone\n4. Heater → evaporate slime (damage)\n5. Freezer → solidify slime into walls\n6. Waves increase slime volume & speed",
+    whyNew: ["Enemy = fluid, not units. Fundamentally new TD", "Creeper World 4 proved liquid defense, no casual web version", "Fluid simulation visuals are inherently captivating"],
+    addiction: ["Slime leaking through cracks = panic + thrill", "Perfect dam design = satisfaction", "Physics sim = different result every time"],
+    monetize: "Slime color/texture skins, rewarded ads (emergency freeze), challenge modes",
+    refs: ["Creeper World 4", "Where's My Water (Disney)"],
+    tech: ["Phaser 3", "LiquidFun.js", "Cellular automata"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "4-5 weeks", difficulty: 4, tags: ["blueocean"]
+  },
+  {
+    id: "D13", type: "defense", title: "Escort Defense", titleKo: "Escort Defense",
+    subtitle: "Protect a moving target",
+    desc: "Not base defense — escort a VIP moving through dangerous territory. Position guards around the VIP in real-time as ambush points approach.",
+    flow: "1. VIP (king/princess/merchant) auto-moves A→B\n2. Ambush points shown ahead (preview)\n3. Drag 3-5 guards around VIP\n4. Ambush triggers → guards auto-fight\n5. VIP HP reaches 0 → fail\n6. Different routes + ambush patterns per stage",
+    whyNew: ["Flips 'fixed defense' to 'moving defense'", "Escort missions = most tense RPG missions", "Guard formation + timing = fresh tactical layer"],
+    addiction: ["Ambush defuse thrill", "VIP surviving with 1HP = nail-biting", "Guard combo + formation experiments"],
+    monetize: "VIP character skins IAP, rewarded ads (+1 guard), story campaign",
+    refs: ["Go! Save the Queen!", "Bad North"],
+    tech: ["Phaser 3", "Pre-defined paths", "Auto-targeting AI"],
+    fresh: 4, addictive: 4, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "D14", type: "defense", title: "Reverse TD", titleKo: "Reverse TD",
+    subtitle: "YOU are the attacker",
+    desc: "Role reversal: AI places towers, you send units to break through. Choose which units, in what order, with what timing. PvP mode: take turns attacking/defending.",
+    flow: "1. See AI's tower layout (fully visible)\n2. Budget units: infantry, cavalry, flyers, tanks, healers\n3. Choose deployment timing (all at once? staggered?)\n4. Units auto-advance through tower fire\n5. Reach base → win / wiped out → rebuild\n6. PvP: swap attacker/defender roles",
+    whyNew: ["TD from 180° opposite perspective", "'How do I crack this defense?' = reverse puzzle", "PvP extension: attack/defend swap"],
+    addiction: ["Cracking perfect defenses = satisfaction", "Unit combo experiments", "PvP attack/defend alternation"],
+    monetize: "Unit skins IAP, rewarded ads (extra budget), PvP ranked seasons",
+    refs: ["Reverse Craft TD", "Bloons TD Battles"],
+    tech: ["Phaser 3", "Pre-designed AI layouts", "Unit pathfinding"],
+    fresh: 5, addictive: 4, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "D15", type: "defense", title: "Dice TD", titleKo: "Dice TD",
+    subtitle: "Roll dice, place towers, merge",
+    desc: "Roll 3 dice per wave. Dice number = tower type and tier. Same numbers merge up (1+1=2, 6+6=Legendary). Luck + strategy perfectly balanced.",
+    flow: "1. Roll 3 dice before each wave\n2. Dice number = tower generated (1=basic, 6=magic)\n3. Same numbers merge → higher tier\n4. 6+6 = Random legendary tower!\n5. Limited rolls → strategic merging essential\n6. Boss waves: bonus roll chance",
+    whyNew: ["Random Dice formula reinterpreted for casual TD", "Dice rolling = visual fun + gacha dopamine", "Bad luck recoverable with strategy"],
+    addiction: ["Physical dice animation = sensory satisfaction", "'Roll a 6!' gambling psychology", "Merge system = 2048 addiction", "Legendary tower appearance = screen explosion"],
+    monetize: "Premium dice skins (gold, crystal, neon), rewarded ads (extra roll), seasonal legendary towers",
+    refs: ["Random Dice (100M+ downloads)", "Dice Tower Defense (itch.io)"],
+    tech: ["Phaser 3", "3D CSS / sprite animation", "Merge + tier table"],
+    fresh: 4, addictive: 5, competition: 4, devTime: "2-3 weeks", difficulty: 2, tags: ["quick"]
+  },
+
+  // ===== SRPG =====
+  {
+    id: "S1", type: "srpg", title: "Formation Battle", titleKo: "Formation Battle",
+    subtitle: "Place units, watch AI fight",
+    desc: "Budget-based unit placement on grid → auto-battle. Rock-paper-scissors-lizard-spock affinity (5-way). Roguelike campaign. TFT compressed to 1 minute.",
+    flow: "1. Budget 100 gold. Place units (swordsman 20, archer 15...)\n2. Affinity: sword→archer→cavalry→mage→shield→sword\n3. 'Fight!' → 30s auto-battle with physics knockback\n4. Win → pick 1 of 3 rewards\n5. 3 losses → run ends, meta upgrades",
+    whyNew: ["TFT's place+watch compressed to 1-min battles", "Bad North's visual HP (soldier count=HP)", "TABS physics comedy + strategy"],
+    addiction: ["'This formation should work...' unexpected results → reposition urge", "Unit combo experimentation", "Battle replay sharing = viral"],
+    monetize: "Rewarded ads (undo/reposition), premium unit skins, weekly tournament",
+    refs: ["TFT (100M users)", "Bad North", "TABS (98% positive)"],
+    tech: ["Phaser 3", "Matter.js", "Kenney Roguelike Pack"],
+    fresh: 4, addictive: 5, competition: 3, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "S2", type: "srpg", title: "Emoji Army War", titleKo: "Emoji Army War",
+    subtitle: "Emojis are your soldiers",
+    desc: "Emojis as units with troop counts. Physics-based auto-battle. Auto-generated GIF replay for sharing. Zero asset cost (system emoji).",
+    flow: "1. Budget 200 troops. Assign to emoji units\n2. Place: swords50 bows30 horses40 mages20\n3. 'GO!' → emoji swarms collide (physics)\n4. Affinity: sword>bow>horse>mage>sword\n5. Position+affinity beats raw numbers\n6. Battle result → auto-generated GIF → share",
+    whyNew: ["Emoji RPS simulator already went viral on GitHub/SNS", "Adds strategic layer on top", "Emoji = zero asset cost, universally understood"],
+    addiction: ["Physics collision = unpredictable results = 'one more!'", "Finding the strongest combo", "GIF sharing = 'my emoji army won!' viral", "PvP: your combo vs their combo"],
+    monetize: "Premium emoji units (special emojis), rewarded ads (troop bonus), tournament entry",
+    refs: ["lewdev/rps-battle (GitHub)", "TABS"],
+    tech: ["Phaser 3", "Matter.js", "gif.js"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "2-3 weeks", difficulty: 2, tags: ["blueocean", "quick"]
+  },
+  {
+    id: "S3", type: "srpg", title: "Rewind Tactics", titleKo: "Rewind Tactics",
+    subtitle: "Undo mistakes, perfect your plan",
+    desc: "5x5 grid, 3 units, enemy moves shown in advance. Clear all enemies in 5 turns. 3 rewind tokens to fix mistakes. Puzzle meets tactics.",
+    flow: "1. Map: enemy positions + next-turn actions (arrows)\n2. Command 3 units: move/attack\n3. Simultaneous execution → see results\n4. Mistake → rewind token to previous turn\n5. Clear in 5 turns → S/A/B rank\n6. Roguelike campaign: unit upgrades per battle",
+    whyNew: ["Into the Breach's full-info + rewind = zero fear of mistakes", "Biggest strategy barrier ('wrong click = ruined') removed", "Puzzle-tactics crossover → non-gamers try it"],
+    addiction: ["'Can I clear without rewinding?' self-challenge", "S-rank perfect = achievement", "Each stage = independent puzzle = short sessions", "Roguelike unit growth = long-term motivation"],
+    monetize: "Extra rewind tokens (rewarded ads), premium campaign ($2.99), daily challenge",
+    refs: ["Into the Breach", "StarVaders"],
+    tech: ["Phaser 3 / React+CSS Grid", "Immutable state snapshots", "Kenney 1-Bit Pack"],
+    fresh: 5, addictive: 4, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "S4", type: "srpg", title: "Territory War .io", titleKo: "Territory War .io",
+    subtitle: "Real-time multiplayer conquest",
+    desc: "8-16 players on a map. Click to expand territory. Bigger territory = faster expansion (compound interest). Diplomacy, alliances, betrayal emerge naturally.",
+    flow: "1. 8-16 players, random start points\n2. Click direction → territory auto-expands\n3. Bigger territory = faster troop production\n4. Meet enemy territory → auto-battle (troop count)\n5. Alliance: shared border = auto-alliance proposal\n6. Last player/team standing → victory",
+    whyNew: ["Territorial.io formula simplified + visual upgrade", "'Interest' mechanic explains entire economy (1 rule = infinite strategy)", ".io instant-join, instant-restart"],
+    addiction: ["Territory expansion = visual satisfaction (coloring + strategy)", "'Just eat THAT territory and I'm #1' = can't stop", "PvP tension + diplomatic betrayal = drama every match"],
+    monetize: "Custom flag/color skins IAP, premium maps, between-round ads",
+    refs: ["Territorial.io", "Lordz.io"],
+    tech: ["Phaser 3", "Colyseus", "Grid-based flood fill"],
+    fresh: 3, addictive: 5, competition: 2, devTime: "5-6 weeks", difficulty: 4, tags: []
+  },
+  {
+    id: "S5", type: "srpg", title: "60-Second War", titleKo: "60-Second War",
+    subtitle: "60 seconds to prepare, then WAR",
+    desc: "60-second timer: compose army + pick terrain. Timer ends → 30s auto-battle animation. 5 rounds total = one game in 5 minutes.",
+    flow: "1. 60-second timer starts\n2. Drag unit cards to slots\n3. Choose terrain (forest/mountain/plain → unit bonuses)\n4. Timer ends → 30s auto-battle animation\n5. Win/lose → gain/lose territory\n6. After 5 rounds: more territory wins",
+    whyNew: ["Time pressure + strategy = gut decisions (no analysis paralysis)", "One game = exactly 5 minutes", "Clash Royale pressure + Into the Breach depth"],
+    addiction: ["'60 seconds more!' — short but intense", "Time pressure = adrenaline", "5 rounds = comeback possible → tension until end"],
+    monetize: "PvP ranking → battle pass, unit card packs IAP, rewarded ads (+15s prep time)",
+    refs: ["Clash Royale (200M MAU)", "1-minute RTS concept"],
+    tech: ["Phaser 3", "Colyseus", "JSON card system"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean"]
+  },
+  {
+    id: "S6", type: "srpg", title: "Commander Wars", titleKo: "Commander Wars",
+    subtitle: "Lead 30 soldiers, Langrisser-style",
+    desc: "Each hero commands 10-30 soldiers. Soldiers are strong only within commander's aura range. Commander falls = all soldiers flee. Place → auto-battle.",
+    flow: "1. Pick 3 heroes (sword/bow/cavalry/mage/shield)\n2. Assign soldiers per hero (budget: 60 total)\n3. Place heroes on grid → soldiers auto-form around\n4. Command range (circular aura): soldiers +30% ATK/DEF\n5. 'Fight!' → 30s auto-battle (soldier count = visual HP)\n6. Hero dies → subordinate soldiers panic and flee",
+    whyNew: ["Langrisser's core (commander+soldiers) in 1-min auto-battle", "TFT-style place+watch but with ARMY scale", "Soldier count as visual HP = intuitive", "No large-scale soldier sim on web"],
+    addiction: ["1-square hero placement difference = win/loss reversal", "30 soldiers swarming = visual spectacle", "Hero combo + soldier distribution = dual strategy"],
+    monetize: "Hero skins IAP, rewarded ads (reposition), seasonal tournament",
+    refs: ["Langrisser", "Bad North", "TFT"],
+    tech: ["Phaser 3", "bitECS", "Boids flocking"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean", "langrisser"]
+  },
+  {
+    id: "S7", type: "srpg", title: "Aura Chain Tactics", titleKo: "Aura Chain Tactics",
+    subtitle: "Chain auras for massive damage",
+    desc: "Attack an enemy → aura tile appears behind them. Another ally attacks FROM that tile → 2x damage + new aura. Chain 5 = screen-wide explosion. Pure positioning puzzle.",
+    flow: "1. 5x5 grid. 3 allies vs 5 enemies\n2. Ally A attacks Enemy①→ aura tile behind ①\n3. Ally B moves to aura tile → attacks Enemy② → 2x + new aura\n4. Ally C from new aura → 3-chain! 3x damage!\n5. Max 5-chain = ultimate explosion\n6. 5-turn limit → S-rank for minimal turns",
+    whyNew: ["Jeanne d'Arc's Burning Aura reborn as PUZZLE game", "'What order maximizes chains?' = turn puzzle", "Simplifies SRPG to ONE mechanic: chain positioning", "Zero web games with this mechanic"],
+    addiction: ["5-chain explosion = dopamine rush", "'Different order saves 1 turn' optimization", "Puzzle-like short sessions (1-2 min/stage)", "Each stage = independent puzzle"],
+    monetize: "Hint system (rewarded ads), stage packs IAP ($1.99/50), daily aura challenge",
+    refs: ["Jeanne d'Arc (PSP)", "Into the Breach"],
+    tech: ["React + CSS Grid / Phaser 3", "BFS/DFS chain calculation", "Tile state management"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "2-3 weeks", difficulty: 2, tags: ["blueocean", "jeanne", "quick"]
+  },
+  {
+    id: "S8", type: "srpg", title: "Transform Tactics", titleKo: "Transform Tactics",
+    subtitle: "Save SP, transform, dominate",
+    desc: "Units accumulate SP (+1/turn). At SP 3: TRANSFORM → 2x all stats + full HP heal + 3 turns. Collect transformation gems for different forms. Timing is everything.",
+    flow: "1. 4 units deployed. Each has SP gauge\n2. SP +1 per turn. At SP 3 → 'Transform!' available\n3. Transform: visual change + ATK/DEF 2x + full HP heal\n4. Lasts 3 turns, then 5-turn cooldown\n5. Gem collection: fire gem=flame warrior, ice gem=frost knight\n6. Gem fusion: combine gems for new transformation forms",
+    whyNew: ["Jeanne d'Arc transformation + skill stones as collection RPG", "'When to transform' is the ONLY key decision = ultra-simple", "Transformation cutscene = always want to see it", "Gem fusion (skill binding) = collection+combo meta"],
+    addiction: ["Crisis → transform → reversal thrill", "Gem collection = Pokemon collecting urge", "Transformation form compendium = completionist drive", "Gem combo experiments"],
+    monetize: "Rare gems IAP, rewarded ads (fusion materials), seasonal transformation forms",
+    refs: ["Jeanne d'Arc", "Fire Emblem (class change)"],
+    tech: ["Phaser 3", "Sprite swap + particle FX", "JSON gem recipe table"],
+    fresh: 5, addictive: 4, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean", "jeanne"]
+  },
+  {
+    id: "S9", type: "srpg", title: "Skill Alchemy Battle", titleKo: "Skill Alchemy Battle",
+    subtitle: "Fuse skill stones, discover recipes",
+    desc: "Equip 3 skill stones per unit. Battle is auto — skill setup is the game. Fuse 2 stones to create NEW skills. Recipes are hidden — discover by experimenting. Community shares finds.",
+    flow: "1. Equip 3 skill stones per unit (attack/defense/special)\n2. Battle: auto-proceed (skills auto-activate)\n3. Battle rewards: new skill stones\n4. Fusion lab: Stone A + Stone B = ??? (experiment!)\n5. Recipes auto-log in compendium\n6. Rare combo = legendary skill (full-screen FX)",
+    whyNew: ["Jeanne d'Arc's skill binding as alchemy concept", "Battle isn't main content — FUSION is", "Hidden recipes → community sharing = natural viral", "'I discovered this combo first!' pride"],
+    addiction: ["Fusion → 'what will I get?' gacha psychology", "Recipe compendium completion", "Legendary skill discovery = dopamine explosion", "Community: 'this combo is OP lol' sharing"],
+    monetize: "Fusion materials IAP, rewarded ads (recipe preview), seasonal stones",
+    refs: ["Jeanne d'Arc (150+ recipes)", "Doodle God"],
+    tech: ["Phaser 3 / React", "2D combo hash table", "localStorage history"],
+    fresh: 4, addictive: 5, competition: 5, devTime: "2-3 weeks", difficulty: 2, tags: ["jeanne", "quick"]
+  },
+  {
+    id: "S10", type: "srpg", title: "Branching Wars", titleKo: "Branching Wars",
+    subtitle: "Your choices change everything",
+    desc: "After each battle: 2 faction choices. Kingdom route = knight units + castle defense. Rebel route = guerrilla units + ambush battles. 8 endings total.",
+    flow: "1. First battle: common (bandit subjugation)\n2. After battle: 'Serve the Kingdom' vs 'Join Rebels'\n3. Kingdom: knight units + castle defense missions\n4. Rebels: guerrilla units + ambush missions\n5. Mid-game: another branch (mercenary? solo?)\n6. 8 total endings → ending compendium",
+    whyNew: ["Langrisser's 13 routes compressed to mini-scale (30min/route)", "Choice consequences are IMMEDIATE (different units, different maps)", "'What if I chose differently?' = forced replays"],
+    addiction: ["'What's different in the rebel route?' curiosity", "8 endings collection = completionist drive", "Same battle from different factions = two-sided story", "Hidden routes discovered → community sharing"],
+    monetize: "Hidden route hints (rewarded ads), premium routes ($0.99), character skins",
+    refs: ["Langrisser II (13 routes)", "Reigns"],
+    tech: ["Phaser 3", "FSM story branching", "ink.js or custom JSON"],
+    fresh: 4, addictive: 4, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: ["langrisser"]
+  },
+  {
+    id: "S11", type: "srpg", title: "Mini Legion Commander", titleKo: "Mini Legion Commander",
+    subtitle: "Drag hero, soldiers follow like sheep",
+    desc: "Drag your hero → 20 soldiers follow in a flock (boids). Push hero toward enemies → soldiers charge. Pull back → retreat. One-touch command. Absorb defeated enemies.",
+    flow: "1. Start: 1 hero + 20 soldiers\n2. Touch/drag hero → soldiers flock behind (boids)\n3. Contact enemies → auto-battle (soldier count = power)\n4. Your soldiers > enemy soldiers → absorb them!\n5. Defeat multiple enemy groups → snowball\n6. Boss: 100 soldiers vs boss HP 200",
+    whyNew: [".io simplicity + Langrisser command fantasy", "Lordz.io proved formula → single-player roguelike version", "One-hand controls = commute session perfect"],
+    addiction: ["20→100 soldier growth = visual spectacle", "Boids movement is cute and natural", "100 soldiers charging a boss = cinematic", "Roguelike: different upgrades each run"],
+    monetize: "Hero skins IAP, rewarded ads (revive/bonus soldiers), soldier count leaderboard",
+    refs: ["Lordz.io", "Langrisser"],
+    tech: ["Phaser 3", "Boids flocking", "1-Bit minimal sprites"],
+    fresh: 4, addictive: 5, competition: 4, devTime: "2-3 weeks", difficulty: 2, tags: ["langrisser", "quick"]
+  },
+  {
+    id: "S12", type: "srpg", title: "Time Loop Tactics", titleKo: "Time Loop Tactics",
+    subtitle: "Cooperate with your past selves",
+    desc: "Same battle repeated. Each loop adds 1 new unit. Previous loop's units replay their recorded actions as ghosts. Final loop: all past selves fight together perfectly.",
+    flow: "1. Loop 1: Unit A alone → actions recorded\n2. Loop 2: Unit B + Unit A ghost (replays recorded actions)\n3. Loop 3: Unit C + A ghost + B ghost\n4. Final loop: all 3 perfectly synchronized\n5. Each loop: 'Should I do it differently?' timing optimization\n6. S-rank: all loops in perfect sync",
+    whyNew: ["'Cooperate with your past self' = ONE-OF-A-KIND mechanic", "Braid + SRPG crossover = puzzle depth", "More loops = stronger (failure becomes growth)", "Super Time Force proved action version → turn-based is UNEXPLORED"],
+    addiction: ["All loops syncing perfectly = PEAK satisfaction", "'Standing HERE in loop 2 makes loop 3 easier' = time puzzle", "Final replay: 3 units fighting simultaneously = cinematic", "GIF replay sharing = viral"],
+    monetize: "Extra loop (rewarded ads), premium campaign IAP, replay GIF sharing",
+    refs: ["Super Time Force", "Braid", "The Forgotten City"],
+    tech: ["Phaser 3", "Frame-by-frame state recording", "Ghost replay engine"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "4-5 weeks", difficulty: 4, tags: ["blueocean"]
+  },
+  {
+    id: "S13", type: "srpg", title: "Dice Tactics", titleKo: "Dice Tactics",
+    subtitle: "Every action rolls a die",
+    desc: "Move = dice squares, Attack = dice vs dice, Skills = specific number combos. Customize dice faces like equipment. Triple roll = ultimate ability!",
+    flow: "1. Equip 3 dice per unit (move/attack/defense)\n2. Turn start: roll all 3 simultaneously\n3. Move dice 4 → move 4 squares\n4. Attack dice 5 vs enemy defense dice 3 → 2 damage\n5. Triple (same number) = ultimate skill activation!\n6. Blacksmith: replace die faces (turn 1→6!)",
+    whyNew: ["SRPG probability made VISIBLE as physical dice", "Rolling dice > seeing '80% hit chance'", "Dice customization = equipment system replacement", "Dicey Dungeons proved dice RPG → tactical combat is new"],
+    addiction: ["Physical dice animation = sensory satisfaction", "Triple = lottery jackpot feeling", "Dice face customization = infinite builds", "Bad luck recoverable with strategy = skill reward"],
+    monetize: "Rare dice sets IAP (crystal, gold, diamond), rewarded ads (reroll), seasonal dice events",
+    refs: ["Dicey Dungeons", "D&D TTRPG dice thrill"],
+    tech: ["Phaser 3", "3D CSS transform", "Turn-based grid (5x5-7x7)"],
+    fresh: 4, addictive: 5, competition: 4, devTime: "3-4 weeks", difficulty: 3, tags: []
+  },
+  {
+    id: "S14", type: "srpg", title: "Alliance & Betrayal", titleKo: "Alliance & Betrayal",
+    subtitle: "Trust no one, win everything",
+    desc: "4-player multiplayer war. Each round: secret alliance/betrayal vote. Mutual alliance = joint attack. One-sided betrayal = backstab bonus. Both betray = both take damage.",
+    flow: "1. 4 players, each with territory + army\n2. Round start: secret vote (ally with 1 player)\n3. Mutual alliance → combined military, joint attack\n4. One allies, other betrays → betrayer gets ambush bonus\n5. Both betray → both take damage\n6. 3 eliminated → last player wins",
+    whyNew: ["Prisoner's Dilemma as a game → psychology is core", "Among Us social fun + war sim strategy", "Friends playing = 'friendship destroyer game' = viral", "Langrisser factions as real-time multiplayer"],
+    addiction: ["'I'll really ally this time' → lying thrill", "Successful betrayal reversal = drama", "Chat diplomacy = mafia-level immersion", "Every match = different human dynamics"],
+    monetize: "Emoticons/character skins IAP, premium maps, battle pass",
+    refs: ["Among Us", "Risk (board game)"],
+    tech: ["Phaser 3", "Colyseus", "Secret voting server logic"],
+    fresh: 5, addictive: 5, competition: 5, devTime: "3-4 weeks", difficulty: 3, tags: ["blueocean"]
+  },
+  {
+    id: "S15", type: "srpg", title: "One Line War", titleKo: "One Line War",
+    subtitle: "1D battlefield, infinite strategy",
+    desc: "Battlefield is ONE horizontal line. Your units march left→right, enemies right→left. Unit order and spacing is ALL the strategy. 10-second matches.",
+    flow: "1. Screen = one horizontal line\n2. Place your units in order (left side)\n3. Enemy units march from right\n4. Meet → auto-battle (affinity: sword>bow>shield>sword)\n5. Your units reach right edge → win\n6. Key: tank first? DPS first? spacing?",
+    whyNew: ["1D SRPG = ultimate simplification", "2D complexity compressed to ORDER DECISION only", "Epic War formula + affinity+spacing evolution", "One-hand scroll play = mobile perfect"],
+    addiction: ["Changing 1 unit order = completely different result", "10-second match = infinite 'one more!' loop", "Enemy pattern reading = 'ah, tank first this time!'", "PvP: predict opponent's order = mind game"],
+    monetize: "Unit skins IAP, rewarded ads (+1 unit), PvP ranked seasons",
+    refs: ["Epic War", "Stick War"],
+    tech: ["Phaser 3 / React", "1D array collision", "Emoji or minimal sprites"],
+    fresh: 4, addictive: 4, competition: 3, devTime: "1-2 weeks", difficulty: 1, tags: ["quick"]
+  }
+];
+
+function createCard(c) {
+  const freshPct = c.fresh * 20;
+  const addictPct = c.addictive * 20;
+  const compPct = c.competition * 20;
+  const compLabel = compPct >= 80 ? 'Blue Ocean' : compPct >= 60 ? 'Low Comp' : 'Some Comp';
+
+  let badges = '';
+  if (c.tags.includes('blueocean')) badges += '<span class="badge blue-ocean">Blue Ocean</span>';
+  if (c.tags.includes('langrisser')) badges += '<span class="badge langrisser">Langrisser</span>';
+  if (c.tags.includes('jeanne')) badges += '<span class="badge jeanne">Jeanne d\'Arc</span>';
+
+  let dots = '';
+  for (let i = 1; i <= 5; i++) dots += `<div class="dot ${i <= c.difficulty ? 'filled' : ''}"></div>`;
+
+  return `
+    <div class="game-card ${c.type}" data-id="${c.id}" data-tags="${c.tags.join(',')}" onclick="openModal('${c.id}')">
+      <div class="card-header">
+        <span class="card-id ${c.type}">${c.id}</span>
+        <div class="card-badges">${badges}</div>
+      </div>
+      <div class="card-title">${c.title}</div>
+      <div class="card-subtitle">${c.subtitle}</div>
+      <div class="card-desc">${c.desc}</div>
+      <div class="card-stats">
+        <div class="card-stat">
+          <div class="card-stat-label">Fresh</div>
+          <div class="card-stat-bar"><div class="card-stat-fill fresh" style="width:${freshPct}%"></div></div>
+          <div class="card-stat-value">${'&#9733;'.repeat(c.fresh)}</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-label">Addictive</div>
+          <div class="card-stat-bar"><div class="card-stat-fill addictive" style="width:${addictPct}%"></div></div>
+          <div class="card-stat-value">${'&#9733;'.repeat(c.addictive)}</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-label">Opportunity</div>
+          <div class="card-stat-bar"><div class="card-stat-fill competition" style="width:${compPct}%"></div></div>
+          <div class="card-stat-value">${compLabel}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="dev-time">Dev: <strong>${c.devTime}</strong></div>
+        <div class="difficulty">${dots}</div>
+      </div>
+      <div class="card-tech">${c.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}</div>
+    </div>`;
+}
+
+function renderCards() {
+  const priGrid = document.getElementById('priority-grid');
+  const defGrid = document.getElementById('defense-grid');
+  const srpgGrid = document.getElementById('srpg-grid');
+  priGrid.innerHTML = concepts.filter(c => c.type === 'priority').map(createCard).join('');
+  defGrid.innerHTML = concepts.filter(c => c.type === 'defense').map(createCard).join('');
+  srpgGrid.innerHTML = concepts.filter(c => c.type === 'srpg').map(createCard).join('');
+}
+
+function filterCards(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active','all','srpg'));
+  event.target.classList.add('active');
+  if (filter === 'all') event.target.classList.add('all');
+  if (filter === 'srpg') event.target.classList.add('srpg');
+
+  const priSection = document.getElementById('priority-section');
+  const priGrid = document.getElementById('priority-grid');
+  const defSection = document.getElementById('defense-section');
+  const srpgSection = document.getElementById('srpg-section');
+  const defGrid = document.getElementById('defense-grid');
+  const srpgGrid = document.getElementById('srpg-grid');
+
+  if (filter === 'srpg') {
+    priSection.style.display = 'none'; priGrid.style.display = 'none';
+    defSection.style.display = 'none'; defGrid.style.display = 'none';
+    srpgSection.style.display = ''; srpgGrid.style.display = '';
+  } else if (filter === 'defense') {
+    priSection.style.display = ''; priGrid.style.display = '';
+    defSection.style.display = ''; defGrid.style.display = '';
+    srpgSection.style.display = 'none'; srpgGrid.style.display = 'none';
+  } else {
+    priSection.style.display = ''; priGrid.style.display = '';
+    defSection.style.display = ''; defGrid.style.display = '';
+    srpgSection.style.display = ''; srpgGrid.style.display = '';
+  }
+
+  document.querySelectorAll('.game-card').forEach(card => {
+    const tags = card.dataset.tags;
+    const type = card.classList.contains('priority') ? 'priority' : card.classList.contains('defense') ? 'defense' : 'srpg';
+    let show = true;
+    if (filter === 'defense') show = type === 'defense' || type === 'priority';
+    else if (filter === 'srpg') show = type === 'srpg';
+    else if (filter === 'blueocean') show = tags.includes('blueocean');
+    else if (filter === 'langrisser') show = tags.includes('langrisser');
+    else if (filter === 'jeanne') show = tags.includes('jeanne');
+    else if (filter === 'quick') show = tags.includes('quick');
+    card.style.display = show ? '' : 'none';
+  });
+}
+
+function openModal(id) {
+  const c = concepts.find(x => x.id === id);
+  if (!c) return;
+  const m = document.getElementById('modal-inner');
+  m.innerHTML = `
+    <span class="card-id ${c.type}" style="display:inline-block;margin-bottom:12px">${c.id}</span>
+    ${c.tags.includes('langrisser') ? '<span class="badge langrisser" style="margin-left:8px">Langrisser Inspired</span>' : ''}
+    ${c.tags.includes('jeanne') ? '<span class="badge jeanne" style="margin-left:8px">Jeanne d\'Arc Inspired</span>' : ''}
+    <h2>${c.title}</h2>
+    <p class="modal-sub">${c.subtitle} &nbsp;|&nbsp; ${c.devTime} &nbsp;|&nbsp; Difficulty: ${'&#9733;'.repeat(c.difficulty)}${'&#9734;'.repeat(5-c.difficulty)}</p>
+    <p>${c.desc}</p>
+    <h3>Game Flow</h3>
+    <div class="flow-block">${c.flow}</div>
+    <h3>Why It's New</h3>
+    <ul>${c.whyNew.map(w => `<li>${w}</li>`).join('')}</ul>
+    <h3>Addiction Hooks</h3>
+    <ul>${c.addiction.map(a => `<li>${a}</li>`).join('')}</ul>
+    <h3>Monetization</h3>
+    <p>${c.monetize}</p>
+    <h3>References</h3>
+    <div class="modal-refs">${c.refs.map(r => `<span class="modal-ref">${r}</span>`).join('')}</div>
+    <h3>Tech Stack</h3>
+    <div class="card-tech" style="margin-top:4px">${c.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}</div>
+  `;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('active');
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('modal').classList.remove('active');
+});
+
+renderCards();
+</script>
+</body>
+</html>
