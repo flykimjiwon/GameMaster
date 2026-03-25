@@ -42,9 +42,33 @@
   },
   "hotPaths": [
     {
+      "path": "GAME_CONCEPTS_100.md",
+      "accessCount": 7,
+      "lastAccessed": 1774327439375,
+      "type": "file"
+    },
+    {
       "path": "GAME_DEV_RESEARCH.md",
       "accessCount": 4,
       "lastAccessed": 1774275837869,
+      "type": "file"
+    },
+    {
+      "path": "CASUAL_SRPG_RESEARCH.md",
+      "accessCount": 4,
+      "lastAccessed": 1774319285204,
+      "type": "file"
+    },
+    {
+      "path": "DEFENSE_RESEARCH.md",
+      "accessCount": 4,
+      "lastAccessed": 1774319285237,
+      "type": "file"
+    },
+    {
+      "path": "SIDE_SCROLL_GAME_CONCEPTS.md",
+      "accessCount": 4,
+      "lastAccessed": 1774327420138,
       "type": "file"
     },
     {
@@ -54,39 +78,39 @@
       "type": "file"
     },
     {
-      "path": "CASUAL_SRPG_RESEARCH.md",
+      "path": "CASUAL_DEFENSE_RESEARCH.md",
       "accessCount": 3,
-      "lastAccessed": 1774275836951,
+      "lastAccessed": 1774319285155,
       "type": "file"
     },
     {
-      "path": "DEFENSE_RESEARCH.md",
+      "path": "SRPG_RESEARCH.md",
       "accessCount": 3,
-      "lastAccessed": 1774275840960,
+      "lastAccessed": 1774319285289,
       "type": "file"
     },
     {
       "path": "package.json",
-      "accessCount": 2,
-      "lastAccessed": 1774275381906,
+      "accessCount": 3,
+      "lastAccessed": 1774327188400,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/package.json",
+      "accessCount": 3,
+      "lastAccessed": 1774403643241,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/index.html",
+      "accessCount": 3,
+      "lastAccessed": 1774403644797,
       "type": "file"
     },
     {
       "path": "games/merge-battle-td/GAME_DESIGN.md",
       "accessCount": 2,
       "lastAccessed": 1774275382481,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/package.json",
-      "accessCount": 2,
-      "lastAccessed": 1774275382506,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/index.html",
-      "accessCount": 2,
-      "lastAccessed": 1774275385434,
       "type": "file"
     },
     {
@@ -114,15 +138,33 @@
       "type": "file"
     },
     {
-      "path": "CASUAL_DEFENSE_RESEARCH.md",
+      "path": "ART_CONCEPT_DESK_WAR.md",
       "accessCount": 2,
-      "lastAccessed": 1774275843667,
+      "lastAccessed": 1774319272690,
       "type": "file"
     },
     {
-      "path": "SRPG_RESEARCH.md",
+      "path": "TOP_PICKS_BY_GENRE.md",
       "accessCount": 2,
-      "lastAccessed": 1774275844010,
+      "lastAccessed": 1774328317847,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/vite.config.ts",
+      "accessCount": 2,
+      "lastAccessed": 1774403643643,
+      "type": "file"
+    },
+    {
+      "path": "games/merge-battle-td/tsconfig.json",
+      "accessCount": 2,
+      "lastAccessed": 1774403644104,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/src/scenes/GameScene.ts",
+      "accessCount": 2,
+      "lastAccessed": 1774403785827,
       "type": "file"
     },
     {
@@ -144,21 +186,9 @@
       "type": "file"
     },
     {
-      "path": "games/merge-battle-td/tsconfig.json",
-      "accessCount": 1,
-      "lastAccessed": 1774270471302,
-      "type": "file"
-    },
-    {
       "path": "games/survivor-defense/vite.config.ts",
       "accessCount": 1,
       "lastAccessed": 1774270472195,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/vite.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774270472892,
       "type": "file"
     },
     {
@@ -228,15 +258,87 @@
       "type": "file"
     },
     {
-      "path": "ART_CONCEPT_DESK_WAR.md",
+      "path": "ART_CONCEPT_CELL_WARS.md",
       "accessCount": 1,
-      "lastAccessed": 1774275412290,
+      "lastAccessed": 1774319272575,
       "type": "file"
     },
     {
-      "path": "SIDE_SCROLL_GAME_CONCEPTS.md",
+      "path": "GAME_DEV_PACKAGES.md",
       "accessCount": 1,
-      "lastAccessed": 1774275802590,
+      "lastAccessed": 1774326370158,
+      "type": "file"
+    },
+    {
+      "path": "GAME_CONCEPTS_DEFENSE_SRPG.md",
+      "accessCount": 1,
+      "lastAccessed": 1774327419225,
+      "type": "file"
+    },
+    {
+      "path": "GAME_CONCEPTS_10.md",
+      "accessCount": 1,
+      "lastAccessed": 1774327420532,
+      "type": "file"
+    },
+    {
+      "path": "prompt-dashboard.html",
+      "accessCount": 1,
+      "lastAccessed": 1774328659648,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1774403662299,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1774403664031,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/vite.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774403664958,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1774403667192,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/src/config/foods.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774403682195,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/src/objects/Food.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774403696466,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/src/scenes/UIScene.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774403775740,
+      "type": "file"
+    },
+    {
+      "path": "games/korean-suika/src/main.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774403777957,
+      "type": "file"
+    },
+    {
+      "path": "games/mirror-defense-duel/server/src/index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774404659316,
       "type": "file"
     }
   ],

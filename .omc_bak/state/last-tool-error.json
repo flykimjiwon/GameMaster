@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"git pull --rebase origin main\",\"description\":\"Pull rebase from GameMaster remote\"}",
+  "error": "Exit code 1\nFrom https://github.com/flykimjiwon/GameMaster\n * branch            main       -> FETCH_HEAD\n * [new branch]      main       -> origin/main\nerror: The following untracked working tree files would be overwritten by checkout:\n\t.omc/state/hud-state.json\n\t.omc/state/hud-stdin-cache.json\n\t.omc/state/idle-notif-cooldown.json\n\t.omc/state/mission-state.json\n\t.omc/state/subagent-tracking.json\nPlease move or remove them before you switch branches.\nAborting\nerror: could not detach HEAD\n\nFrom ht...",
+  "timestamp": "2026-03-24T02:16:34.003Z",
+  "retry_count": 2
+}
