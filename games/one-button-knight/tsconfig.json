@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "phaser": ["../../node_modules/phaser/types/phaser.d.ts"],
+      "gsap": ["../../node_modules/gsap/types/gsap.d.ts"]
+    },
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types"],
+    "types": ["howler"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
