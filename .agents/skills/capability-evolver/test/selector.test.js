@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { selectGene, selectCapsule, selectGeneAndCapsule } = require('../src/gep/selector');
+const { selectGene, selectCapsule, selectGeneAndCapsule, matchPatternToSignals } = require('../src/gep/selector');
 
 const GENES = [
   {
@@ -185,6 +185,38 @@ describe('selectCapsule', () => {
   it('returns null when no triggers match', () => {
     const result = selectCapsule(CAPSULES, ['unrelated']);
     assert.equal(result, null);
+  });
+});
+
+describe('matchPatternToSignals', () => {
+  it('matches exact substring', () => {
+    assert.ok(matchPatternToSignals('error', ['log_error']));
+    assert.ok(matchPatternToSignals('perf', ['perf_bottleneck']));
+  });
+
+  it('is case-insensitive for substring', () => {
+    assert.ok(matchPatternToSignals('Error', ['log_error']));
+    assert.ok(matchPatternToSignals('ERROR', ['log_error']));
+  });
+
+  it('matches regex patterns', () => {
+    assert.ok(matchPatternToSignals('/^log_/', ['log_error', 'other']));
+    assert.ok(matchPatternToSignals('/bottleneck/i', ['Perf_Bottleneck']));
+  });
+
+  it('matches multi-language alias patterns', () => {
+    assert.ok(matchPatternToSignals('error|错误|エラー', ['エラー発生']));
+    assert.ok(matchPatternToSignals('perf|性能', ['性能问题']));
+  });
+
+  it('returns false for no match', () => {
+    assert.ok(!matchPatternToSignals('deploy', ['log_error', 'exception']));
+  });
+
+  it('returns false for null/empty inputs', () => {
+    assert.ok(!matchPatternToSignals(null, ['error']));
+    assert.ok(!matchPatternToSignals('error', null));
+    assert.ok(!matchPatternToSignals('error', []));
   });
 });
 
