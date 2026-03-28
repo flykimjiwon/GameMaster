@@ -6,6 +6,7 @@ const {
   normalizeMutation,
   isHighRiskMutationAllowed,
   isHighRiskPersonality,
+  hasOpportunitySignal,
   clamp01,
 } = require('../src/gep/mutation');
 
@@ -124,6 +125,32 @@ describe('isHighRiskPersonality', () => {
 
   it('returns false for conservative personality', () => {
     assert.ok(!isHighRiskPersonality({ rigor: 0.8, risk_tolerance: 0.2 }));
+  });
+});
+
+describe('hasOpportunitySignal', () => {
+  it('detects known opportunity signals', () => {
+    assert.ok(hasOpportunitySignal(['user_feature_request']));
+    assert.ok(hasOpportunitySignal(['perf_bottleneck']));
+    assert.ok(hasOpportunitySignal(['capability_gap']));
+    assert.ok(hasOpportunitySignal(['stable_success_plateau']));
+    assert.ok(hasOpportunitySignal(['empty_cycle_loop_detected']));
+  });
+
+  it('detects prefixed opportunity signals', () => {
+    assert.ok(hasOpportunitySignal(['user_feature_request:dark_mode']));
+    assert.ok(hasOpportunitySignal(['capability_gap:testing']));
+  });
+
+  it('returns false for non-opportunity signals', () => {
+    assert.ok(!hasOpportunitySignal(['log_error']));
+    assert.ok(!hasOpportunitySignal(['some_random_signal']));
+    assert.ok(!hasOpportunitySignal([]));
+  });
+
+  it('handles null/undefined gracefully', () => {
+    assert.ok(!hasOpportunitySignal(null));
+    assert.ok(!hasOpportunitySignal(undefined));
   });
 });
 
