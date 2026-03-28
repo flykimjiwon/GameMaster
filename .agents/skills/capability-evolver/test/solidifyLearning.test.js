@@ -30,6 +30,67 @@ describe('classifyFailureMode', () => {
     assert.equal(result.reasonClass, 'constraint_destructive');
     assert.equal(result.retryable, false);
   });
+
+  it('treats protocol violations as hard', () => {
+    const result = classifyFailureMode({
+      constraintViolations: [],
+      protocolViolations: ['missing required field'],
+      validation: { ok: true, results: [] },
+      canary: { ok: true, skipped: false },
+    });
+    assert.equal(result.mode, 'hard');
+    assert.equal(result.reasonClass, 'protocol');
+    assert.equal(result.retryable, false);
+  });
+
+  it('treats canary failure as hard', () => {
+    const result = classifyFailureMode({
+      constraintViolations: [],
+      protocolViolations: [],
+      validation: { ok: true, results: [] },
+      canary: { ok: false, skipped: false },
+    });
+    assert.equal(result.mode, 'hard');
+    assert.equal(result.reasonClass, 'canary');
+    assert.equal(result.retryable, false);
+  });
+
+  it('treats skipped canary as non-failure', () => {
+    const result = classifyFailureMode({
+      constraintViolations: [],
+      protocolViolations: [],
+      validation: { ok: true, results: [] },
+      canary: { ok: false, skipped: true },
+    });
+    assert.notEqual(result.reasonClass, 'canary');
+  });
+
+  it('returns unknown soft when no specific failure', () => {
+    const result = classifyFailureMode({
+      constraintViolations: [],
+      protocolViolations: [],
+      validation: { ok: true, results: [] },
+      canary: { ok: true, skipped: false },
+    });
+    assert.equal(result.mode, 'soft');
+    assert.equal(result.reasonClass, 'unknown');
+    assert.equal(result.retryable, true);
+  });
+
+  it('handles HARD CAP BREACH as destructive', () => {
+    const result = classifyFailureMode({
+      constraintViolations: ['HARD CAP BREACH: 50 files modified'],
+      protocolViolations: [],
+    });
+    assert.equal(result.mode, 'hard');
+    assert.equal(result.reasonClass, 'constraint_destructive');
+  });
+
+  it('handles null/empty opts gracefully', () => {
+    const result = classifyFailureMode({});
+    assert.equal(result.mode, 'soft');
+    assert.equal(result.reasonClass, 'unknown');
+  });
 });
 
 describe('adaptGeneFromLearning', () => {
