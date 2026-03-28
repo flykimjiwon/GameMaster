@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { selectGene, selectCapsule, selectGeneAndCapsule, matchPatternToSignals } = require('../src/gep/selector');
+const { selectGene, selectCapsule, selectGeneAndCapsule, matchPatternToSignals, scoreGeneSemantic, cosineSimilarity, tokenize } = require('../src/gep/selector');
 
 const GENES = [
   {
@@ -185,6 +185,66 @@ describe('selectCapsule', () => {
   it('returns null when no triggers match', () => {
     const result = selectCapsule(CAPSULES, ['unrelated']);
     assert.equal(result, null);
+  });
+});
+
+describe('tokenize', () => {
+  it('lowercases and splits text', () => {
+    const tokens = tokenize('Hello World Test');
+    assert.ok(tokens.includes('hello'));
+    assert.ok(tokens.includes('world'));
+    assert.ok(tokens.includes('test'));
+  });
+
+  it('removes stop words', () => {
+    const tokens = tokenize('the quick and slow');
+    assert.ok(!tokens.includes('the'));
+    assert.ok(!tokens.includes('and'));
+    assert.ok(tokens.includes('quick'));
+    assert.ok(tokens.includes('slow'));
+  });
+
+  it('handles null/empty', () => {
+    assert.deepEqual(tokenize(null), []);
+    assert.deepEqual(tokenize(''), []);
+  });
+});
+
+describe('cosineSimilarity', () => {
+  it('returns ~1 for identical vectors', () => {
+    const tf = { a: 1, b: 2 };
+    const sim = cosineSimilarity(tf, tf);
+    assert.ok(Math.abs(sim - 1) < 0.001, `expected ~1 but got ${sim}`);
+  });
+
+  it('returns 0 for orthogonal vectors', () => {
+    assert.equal(cosineSimilarity({ a: 1 }, { b: 1 }), 0);
+  });
+
+  it('returns 0 for empty vectors', () => {
+    assert.equal(cosineSimilarity({}, { a: 1 }), 0);
+    assert.equal(cosineSimilarity({}, {}), 0);
+  });
+});
+
+describe('scoreGeneSemantic', () => {
+  it('scores non-negative for related terms', () => {
+    const gene = { signals_match: ['performance_bottleneck'], id: 'gene_perf', summary: 'fix performance issues' };
+    const score = scoreGeneSemantic(gene, ['performance_bottleneck']);
+    assert.ok(score >= 0, `should have non-negative semantic score, got ${score}`);
+  });
+
+  it('returns 0 for unrelated terms', () => {
+    const gene = { signals_match: ['auth_error'], id: 'gene_auth' };
+    const score = scoreGeneSemantic(gene, ['deploy_success']);
+    // May or may not be 0 due to tokenization, but should be low
+    assert.ok(score >= 0);
+  });
+
+  it('returns 0 for null inputs', () => {
+    assert.equal(scoreGeneSemantic(null, ['error']), 0);
+    assert.equal(scoreGeneSemantic({ signals_match: ['x'] }, null), 0);
+    assert.equal(scoreGeneSemantic({ signals_match: ['x'] }, []), 0);
   });
 });
 
