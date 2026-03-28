@@ -144,7 +144,7 @@ function scoreGeneLearning(gene, signals, envFingerprint) {
       const anti = recentAntiPatterns[j];
       if (!anti) continue;
       // Base penalty: anti-patterns always reduce fitness regardless of signal overlap
-      basePenalty += anti.mode === 'hard' ? 0.25 : 0.08;
+      basePenalty += anti.mode === 'hard' ? 0.4 : 0.12;
       if (!Array.isArray(anti.learning_signals)) continue;
       const overlap = anti.learning_signals.some(function (tag) { return signalTags.has(String(tag)); });
       if (overlap) overlapPenalty += anti.mode === 'hard' ? 0.4 : 0.18;
