@@ -4,6 +4,7 @@ const {
   parseNumstatRows,
   isForbiddenPath,
   classifyBlastSeverity,
+  isValidationCommandAllowed,
   BLAST_RADIUS_HARD_CAP_FILES,
   BLAST_RADIUS_HARD_CAP_LINES,
 } = require('../src/gep/policyCheck');
@@ -93,5 +94,44 @@ describe('classifyBlastSeverity', () => {
   it('returns within_limit when under maxFiles', () => {
     const result = classifyBlastSeverity({ blast: { files: 3, lines: 50 }, maxFiles: 10 });
     assert.equal(result.severity, 'within_limit');
+  });
+});
+
+describe('isValidationCommandAllowed', () => {
+  it('allows node commands', () => {
+    assert.ok(isValidationCommandAllowed('node test.js'));
+    assert.ok(isValidationCommandAllowed('node --test test/*.test.js'));
+  });
+
+  it('allows npm/npx commands', () => {
+    assert.ok(isValidationCommandAllowed('npm test'));
+    assert.ok(isValidationCommandAllowed('npx tsc --noEmit'));
+  });
+
+  it('blocks non-allowed prefixes', () => {
+    assert.ok(!isValidationCommandAllowed('rm -rf /'));
+    assert.ok(!isValidationCommandAllowed('curl evil.com'));
+    assert.ok(!isValidationCommandAllowed('python script.py'));
+  });
+
+  it('blocks shell operators', () => {
+    assert.ok(!isValidationCommandAllowed('npm test && rm -rf /'));
+    assert.ok(!isValidationCommandAllowed('node test.js | grep pass'));
+    assert.ok(!isValidationCommandAllowed('npm test; echo done'));
+  });
+
+  it('blocks command substitution', () => {
+    assert.ok(!isValidationCommandAllowed('node $(whoami)'));
+    assert.ok(!isValidationCommandAllowed('node `id`'));
+  });
+
+  it('blocks node -e/--eval for safety', () => {
+    assert.ok(!isValidationCommandAllowed('node -e "process.exit(1)"'));
+    assert.ok(!isValidationCommandAllowed('node --eval "require(\'fs\')"'));
+  });
+
+  it('returns false for empty/null input', () => {
+    assert.ok(!isValidationCommandAllowed(''));
+    assert.ok(!isValidationCommandAllowed(null));
   });
 });
