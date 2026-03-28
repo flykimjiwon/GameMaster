@@ -40,7 +40,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.damage = cfg.damage;
     this.xpValue = cfg.xp;
 
-    const radius = type === 'golem' ? ENEMY_CONFIG.golem.size / 2 : (cfg as any).radius ?? 12;
+    const radius = type === 'golem' ? ENEMY_CONFIG.golem.size / 2 : type === 'slime' ? ENEMY_CONFIG.slime.radius : ENEMY_CONFIG.bat.radius;
     this.body.setCircle(radius, -radius, -radius);
 
     this.drawShape();
