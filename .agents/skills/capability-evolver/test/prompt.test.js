@@ -17,8 +17,12 @@ afterEach(() => {
   }
 });
 
+function loadPromptModule() {
+  return require('../src/gep/prompt');
+}
+
 function buildMinimalPrompt(overrides) {
-  const { buildGepPrompt } = require('../src/gep/prompt');
+  const { buildGepPrompt } = loadPromptModule();
   return buildGepPrompt({
     nowIso: '2026-01-01T00:00:00.000Z',
     context: '',
@@ -105,5 +109,83 @@ describe('buildGepPrompt -- structure', () => {
   it('contains cycle ID in report requirement', () => {
     const prompt = buildMinimalPrompt({ cycleId: '0099' });
     assert.ok(prompt.includes('0099'), 'prompt should reference cycle ID');
+  });
+});
+
+describe('buildReusePrompt', () => {
+  it('produces reuse-mode prompt with capsule info', () => {
+    const { buildReusePrompt } = loadPromptModule();
+    const result = buildReusePrompt({
+      capsule: {
+        asset_id: 'asset_001',
+        source_node_id: 'node_abc',
+        payload: { summary: 'Fix auth bug', gene: 'gene_auth', confidence: 0.9, trigger: ['auth_error'] },
+      },
+      signals: ['auth_error'],
+      nowIso: '2026-01-01T00:00:00.000Z',
+    });
+    assert.ok(result.includes('REUSE MODE'), 'should contain REUSE MODE header');
+    assert.ok(result.includes('asset_001'), 'should contain asset ID');
+    assert.ok(result.includes('node_abc'), 'should contain source node');
+    assert.ok(result.includes('Fix auth bug'), 'should contain summary');
+    assert.ok(result.includes('0.9'), 'should contain confidence');
+  });
+
+  it('handles missing payload fields gracefully', () => {
+    const { buildReusePrompt } = loadPromptModule();
+    const result = buildReusePrompt({
+      capsule: {},
+      signals: [],
+      nowIso: '2026-01-01T00:00:00.000Z',
+    });
+    assert.ok(result.includes('REUSE MODE'), 'should still produce reuse prompt');
+    assert.ok(result.includes('(no summary)'), 'should show no summary fallback');
+  });
+});
+
+describe('buildLessonsBlock', () => {
+  it('returns empty string for empty lessons', () => {
+    const { buildLessonsBlock } = loadPromptModule();
+    assert.equal(buildLessonsBlock([], []), '');
+    assert.equal(buildLessonsBlock(null, []), '');
+  });
+
+  it('separates positive and negative lessons', () => {
+    const { buildLessonsBlock } = loadPromptModule();
+    const lessons = [
+      { content: 'Retry with backoff works', lesson_type: 'positive', scenario: 'network' },
+      { content: 'Never skip validation', lesson_type: 'negative', scenario: 'deploy' },
+    ];
+    const result = buildLessonsBlock(lessons, ['test']);
+    assert.ok(result.includes('Strategies that WORKED'), 'should have positive section');
+    assert.ok(result.includes('Pitfalls to AVOID'), 'should have negative section');
+    assert.ok(result.includes('Retry with backoff'), 'should contain positive lesson');
+    assert.ok(result.includes('Never skip validation'), 'should contain negative lesson');
+  });
+
+  it('caps at 6 lessons total', () => {
+    const { buildLessonsBlock } = loadPromptModule();
+    const lessons = Array.from({ length: 10 }, (_, i) => ({
+      content: `Lesson ${i}`, lesson_type: 'positive', scenario: 'test',
+    }));
+    const result = buildLessonsBlock(lessons, []);
+    const matches = result.match(/Lesson \d/g) || [];
+    assert.ok(matches.length <= 6, 'should cap at 6 lessons');
+  });
+});
+
+describe('buildNarrativeBlock', () => {
+  it('returns string without throwing', () => {
+    const { buildNarrativeBlock } = loadPromptModule();
+    const result = buildNarrativeBlock();
+    assert.equal(typeof result, 'string');
+  });
+});
+
+describe('buildPrinciplesBlock', () => {
+  it('returns string without throwing', () => {
+    const { buildPrinciplesBlock } = loadPromptModule();
+    const result = buildPrinciplesBlock();
+    assert.equal(typeof result, 'string');
   });
 });
