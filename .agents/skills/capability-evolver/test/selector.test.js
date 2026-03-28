@@ -145,6 +145,37 @@ describe('selectGene', () => {
   });
 });
 
+describe('score-gap guard in drift', () => {
+  it('consistently selects high-score gene over low-score gene under drift', () => {
+    const strongGene = {
+      type: 'Gene', id: 'gene_strong',
+      category: 'repair',
+      signals_match: ['error'],
+      learning_history: [
+        { outcome: 'success', mode: 'none' },
+        { outcome: 'success', mode: 'none' },
+        { outcome: 'success', mode: 'none' },
+      ],
+    };
+    const weakGene = {
+      type: 'Gene', id: 'gene_weak',
+      category: 'repair',
+      signals_match: ['error'],
+      anti_patterns: [
+        { mode: 'hard', learning_signals: ['problem:reliability'] },
+        { mode: 'hard', learning_signals: ['problem:reliability'] },
+        { mode: 'hard', learning_signals: ['problem:reliability'] },
+      ],
+    };
+    // Run 20 times — score gap guard should prevent weak gene from being selected
+    for (let i = 0; i < 20; i++) {
+      const result = selectGene([weakGene, strongGene], ['error'], { effectivePopulationSize: 4 });
+      assert.ok(result.selected);
+      assert.equal(result.selected.id, 'gene_strong', `iteration ${i}: should always pick strong gene`);
+    }
+  });
+});
+
 describe('selectCapsule', () => {
   it('selects capsule matching signals', () => {
     const result = selectCapsule(CAPSULES, ['log_error', 'exception']);
