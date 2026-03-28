@@ -335,6 +335,18 @@ describe('selectGeneAndCapsule', () => {
     assert.ok(Array.isArray(result.selector.reason));
   });
 
+  it('returns driftIntensity based on effectivePopulationSize', () => {
+    const smallPop = selectGene(GENES, ['error'], { effectivePopulationSize: 1 });
+    const largePop = selectGene(GENES, ['error'], { effectivePopulationSize: 100 });
+    assert.ok(smallPop.driftIntensity > largePop.driftIntensity, 'smaller population should have higher drift');
+    assert.ok(largePop.driftIntensity >= 0);
+  });
+
+  it('returns driftMode selection when no drift triggers', () => {
+    const result = selectGene(GENES, ['error'], { effectivePopulationSize: 10000 });
+    assert.equal(result.driftMode, 'selection');
+  });
+
   it('handles failedCapsules to ban genes', () => {
     const result = selectGeneAndCapsule({
       genes: GENES,
