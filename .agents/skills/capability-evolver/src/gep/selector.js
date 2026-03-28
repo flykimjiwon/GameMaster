@@ -280,12 +280,22 @@ function selectGene(genes, signals, opts) {
         if (noveltyScore != null && noveltyScore < 0.3 && topN < filtered.length) {
           topN = Math.min(filtered.length, topN + 1);
         }
+        // Score-gap guard: exclude candidates scoring less than 50% of the top candidate
+        var topScore = filtered[0].score;
+        if (topScore > 0) {
+          while (topN > 1 && filtered[topN - 1].score < topScore * 0.5) topN--;
+        }
         selectedIdx = Math.floor(Math.random() * topN);
         driftMode = 'random_weighted';
       }
     } else {
       // No capability gap data: original random drift behavior
-      const topN = Math.min(filtered.length, Math.max(2, Math.ceil(filtered.length * driftIntensity)));
+      let topN = Math.min(filtered.length, Math.max(2, Math.ceil(filtered.length * driftIntensity)));
+      // Score-gap guard: exclude candidates scoring less than 50% of the top candidate
+      var topScoreFallback = filtered[0].score;
+      if (topScoreFallback > 0) {
+        while (topN > 1 && filtered[topN - 1].score < topScoreFallback * 0.5) topN--;
+      }
       selectedIdx = Math.floor(Math.random() * topN);
       driftMode = 'random';
     }
