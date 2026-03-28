@@ -3,6 +3,10 @@ import { XP_CONFIG } from '../config';
 import type { Player } from '../entities/Player';
 import type { GameScene } from '../scenes/GameScene';
 
+interface XPGemContainer extends Phaser.GameObjects.Container {
+  xpValue: number;
+}
+
 export class XPSystem {
   private scene: GameScene;
   private player: Player;
@@ -25,7 +29,7 @@ export class XPSystem {
 
     const container = this.scene.add.container(x, y, [gem]);
     this.scene.physics.add.existing(container);
-    (container as any).xpValue = value;
+    (container as XPGemContainer).xpValue = value;
     this.scene.xpGems.add(container);
   }
 
@@ -50,7 +54,7 @@ export class XPSystem {
   }
 
   private collectGem(gem: Phaser.GameObjects.Container): void {
-    const value = (gem as any).xpValue || 1;
+    const value = (gem as XPGemContainer).xpValue || 1;
     this.player.xp += value;
 
     const required = XP_CONFIG.baseRequired * this.player.level;
