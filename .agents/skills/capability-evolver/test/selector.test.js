@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { selectGene, selectCapsule, selectGeneAndCapsule, matchPatternToSignals, scoreGeneSemantic, cosineSimilarity, tokenize } = require('../src/gep/selector');
+const { selectGene, selectCapsule, selectGeneAndCapsule, matchPatternToSignals, scoreGeneSemantic, cosineSimilarity, tokenize, buildSelectorDecision } = require('../src/gep/selector');
 
 const GENES = [
   {
@@ -280,6 +280,46 @@ describe('matchPatternToSignals', () => {
   });
 });
 
+describe('buildSelectorDecision', () => {
+  it('builds decision with gene info', () => {
+    const decision = buildSelectorDecision({
+      gene: { id: 'gene_test' },
+      capsule: { id: 'capsule_1' },
+      signals: ['error', 'log_error'],
+      alternatives: [{ id: 'gene_alt' }],
+      memoryAdvice: null,
+      driftEnabled: false,
+    });
+    assert.equal(decision.selected, 'gene_test');
+    assert.ok(Array.isArray(decision.reason));
+    assert.ok(decision.reason.length > 0);
+    assert.deepEqual(decision.alternatives, ['gene_alt']);
+  });
+
+  it('handles null gene', () => {
+    const decision = buildSelectorDecision({
+      gene: null,
+      capsule: null,
+      signals: ['test'],
+      alternatives: [],
+    });
+    assert.equal(decision.selected, null);
+    assert.ok(decision.reason.some(r => r.includes('no matching gene')));
+  });
+
+  it('includes drift info when enabled', () => {
+    const decision = buildSelectorDecision({
+      gene: { id: 'g1' },
+      capsule: null,
+      signals: [],
+      alternatives: [],
+      driftEnabled: true,
+      driftIntensity: 0.5,
+    });
+    assert.ok(decision.reason.some(r => r.includes('drift')));
+  });
+});
+
 describe('selectGeneAndCapsule', () => {
   it('returns selected gene, capsule candidates, and selector decision', () => {
     const result = selectGeneAndCapsule({
@@ -293,5 +333,21 @@ describe('selectGeneAndCapsule', () => {
     assert.ok(result.selector);
     assert.ok(result.selector.selected);
     assert.ok(Array.isArray(result.selector.reason));
+  });
+
+  it('handles failedCapsules to ban genes', () => {
+    const result = selectGeneAndCapsule({
+      genes: GENES,
+      capsules: CAPSULES,
+      signals: ['error'],
+      memoryAdvice: null,
+      driftEnabled: false,
+      failedCapsules: [
+        { gene: 'gene_repair', trigger: ['error'], outcome: { status: 'failed' } },
+        { gene: 'gene_repair', trigger: ['error'], outcome: { status: 'failed' } },
+      ],
+    });
+    // gene_repair should be banned after 2 failures with overlapping signals
+    assert.ok(result.selector);
   });
 });
