@@ -10,6 +10,7 @@ const {
   buildMessage,
   buildHello,
   buildPublish,
+  buildPublishBundle,
   buildFetch,
   buildReport,
   buildDecision,
@@ -90,6 +91,40 @@ describe('typed message builders', () => {
     const msg = buildRevoke({ assetId: 'sha256:abc', reason: 'outdated' });
     assert.equal(msg.message_type, 'revoke');
     assert.equal(msg.payload.reason, 'outdated');
+  });
+});
+
+describe('buildPublishBundle', () => {
+  it('creates a publish message with gene and capsule assets', () => {
+    const gene = { type: 'Gene', id: 'gene_test', strategy: ['fix'] };
+    const capsule = { type: 'Capsule', id: 'capsule_test', trigger: ['error'] };
+    const msg = buildPublishBundle({ gene, capsule });
+    assert.equal(msg.message_type, 'publish');
+    assert.ok(msg.payload.assets.length >= 2);
+    assert.ok(msg.payload.signature);
+  });
+
+  it('throws when gene is invalid', () => {
+    assert.throws(() => buildPublishBundle({ gene: {}, capsule: { type: 'Capsule', id: 'c1' } }));
+  });
+
+  it('throws when capsule is invalid', () => {
+    assert.throws(() => buildPublishBundle({ gene: { type: 'Gene', id: 'g1' }, capsule: {} }));
+  });
+
+  it('includes event when provided', () => {
+    const gene = { type: 'Gene', id: 'g1', strategy: ['x'] };
+    const capsule = { type: 'Capsule', id: 'c1', trigger: ['y'] };
+    const event = { type: 'EvolutionEvent', id: 'ev1', intent: 'repair' };
+    const msg = buildPublishBundle({ gene, capsule, event });
+    assert.equal(msg.payload.assets.length, 3);
+  });
+
+  it('includes chainId when provided', () => {
+    const gene = { type: 'Gene', id: 'g1', strategy: ['x'] };
+    const capsule = { type: 'Capsule', id: 'c1', trigger: ['y'] };
+    const msg = buildPublishBundle({ gene, capsule, chainId: 'chain_abc' });
+    assert.equal(msg.payload.chain_id, 'chain_abc');
   });
 });
 
