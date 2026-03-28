@@ -136,16 +136,20 @@ function scoreGeneLearning(gene, signals, envFingerprint) {
   boost += getEpigeneticBoostLocal(gene, envFingerprint);
 
   if (Array.isArray(gene.anti_patterns) && gene.anti_patterns.length > 0) {
+    let basePenalty = 0;
     let overlapPenalty = 0;
     const signalTags = new Set(require('./learningSignals').expandSignals(signals, ''));
     const recentAntiPatterns = gene.anti_patterns.slice(-6);
     for (let j = 0; j < recentAntiPatterns.length; j++) {
       const anti = recentAntiPatterns[j];
-      if (!anti || !Array.isArray(anti.learning_signals)) continue;
+      if (!anti) continue;
+      // Base penalty: anti-patterns always reduce fitness regardless of signal overlap
+      basePenalty += anti.mode === 'hard' ? 0.25 : 0.08;
+      if (!Array.isArray(anti.learning_signals)) continue;
       const overlap = anti.learning_signals.some(function (tag) { return signalTags.has(String(tag)); });
       if (overlap) overlapPenalty += anti.mode === 'hard' ? 0.4 : 0.18;
     }
-    boost -= overlapPenalty;
+    boost -= basePenalty + overlapPenalty;
   }
 
   return Math.max(-1.5, Math.min(1.5, boost));
