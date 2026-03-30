@@ -4,3 +4,16 @@ dist
 *.local
 .omc/
 package-lock.json
+
+# Generated/temporary files
+*.log
+*.docx
+assets/gep/
+evolver.log
+results.tsv
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
