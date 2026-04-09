@@ -1,11 +1,20 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1774266231312,
+  "lastScanned": 1774877583737,
   "projectRoot": "/Users/jiwonkim/Desktop/kimjiwon/GameMaster",
   "techStack": {
-    "languages": [],
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
     "frameworks": [],
-    "packageManager": null,
+    "packageManager": "npm",
     "runtime": null
   },
   "build": {
@@ -22,9 +31,13 @@
     "fileOrganization": null
   },
   "structure": {
-    "isMonorepo": false,
-    "workspaces": [],
-    "mainDirectories": [],
+    "isMonorepo": true,
+    "workspaces": [
+      "games/*"
+    ],
+    "mainDirectories": [
+      "assets"
+    ],
     "gitBranches": {
       "defaultBranch": "main",
       "branchingStrategy": null
@@ -32,211 +45,111 @@
   },
   "customNotes": [],
   "directoryMap": {
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 0,
+      "lastAccessed": 1774877583723,
+      "keyFiles": []
+    },
+    "games": {
+      "path": "games",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1774877583725,
+      "keyFiles": []
+    },
     "skills": {
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1774266231307,
+      "lastAccessed": 1774877583732,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
-      "path": "GAME_DEV_RESEARCH.md",
-      "accessCount": 4,
-      "lastAccessed": 1774275837869,
+      "path": "CLAUDE.md",
+      "accessCount": 3,
+      "lastAccessed": 1774878672574,
       "type": "file"
     },
     {
-      "path": "games/survivor-defense/GAME_DESIGN.md",
+      "path": "README.md",
       "accessCount": 3,
-      "lastAccessed": 1774275409732,
+      "lastAccessed": 1774878679699,
       "type": "file"
     },
     {
-      "path": "CASUAL_SRPG_RESEARCH.md",
-      "accessCount": 3,
-      "lastAccessed": 1774275836951,
+      "path": "games/themed-cell-wars/GAME_DESIGN.md",
+      "accessCount": 2,
+      "lastAccessed": 1774878616353,
       "type": "file"
     },
     {
-      "path": "DEFENSE_RESEARCH.md",
-      "accessCount": 3,
-      "lastAccessed": 1774275840960,
+      "path": "games/themed-desk-war/GAME_DESIGN.md",
+      "accessCount": 2,
+      "lastAccessed": 1774878623696,
+      "type": "file"
+    },
+    {
+      "path": "games/themed-color-wars/GAME_DESIGN.md",
+      "accessCount": 2,
+      "lastAccessed": 1774878629415,
       "type": "file"
     },
     {
       "path": "package.json",
-      "accessCount": 2,
-      "lastAccessed": 1774275381906,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/GAME_DESIGN.md",
-      "accessCount": 2,
-      "lastAccessed": 1774275382481,
+      "accessCount": 1,
+      "lastAccessed": 1774878280508,
       "type": "file"
     },
     {
       "path": "games/merge-battle-td/package.json",
-      "accessCount": 2,
-      "lastAccessed": 1774275382506,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/index.html",
-      "accessCount": 2,
-      "lastAccessed": 1774275385434,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/src/main.ts",
-      "accessCount": 2,
-      "lastAccessed": 1774275385602,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/src/scenes/BuildScene.ts",
-      "accessCount": 2,
-      "lastAccessed": 1774275394133,
-      "type": "file"
-    },
-    {
-      "path": "games/survivor-defense/src/main.ts",
-      "accessCount": 2,
-      "lastAccessed": 1774275409303,
-      "type": "file"
-    },
-    {
-      "path": "ART_CONCEPT_RESEARCH.md",
-      "accessCount": 2,
-      "lastAccessed": 1774275838172,
-      "type": "file"
-    },
-    {
-      "path": "CASUAL_DEFENSE_RESEARCH.md",
-      "accessCount": 2,
-      "lastAccessed": 1774275843667,
-      "type": "file"
-    },
-    {
-      "path": "SRPG_RESEARCH.md",
-      "accessCount": 2,
-      "lastAccessed": 1774275844010,
-      "type": "file"
-    },
-    {
-      "path": "SESSION_DASHBOARD.html",
       "accessCount": 1,
-      "lastAccessed": 1774270374927,
+      "lastAccessed": 1774878288360,
       "type": "file"
     },
     {
       "path": "games/survivor-defense/package.json",
       "accessCount": 1,
-      "lastAccessed": 1774270463059,
+      "lastAccessed": 1774878293543,
       "type": "file"
     },
     {
-      "path": "games/survivor-defense/tsconfig.json",
+      "path": "games/themed-cell-wars/package.json",
       "accessCount": 1,
-      "lastAccessed": 1774270470044,
+      "lastAccessed": 1774878297094,
       "type": "file"
     },
     {
-      "path": "games/merge-battle-td/tsconfig.json",
+      "path": "games/themed-color-wars/package.json",
       "accessCount": 1,
-      "lastAccessed": 1774270471302,
+      "lastAccessed": 1774878301572,
       "type": "file"
     },
     {
-      "path": "games/survivor-defense/vite.config.ts",
+      "path": "games/themed-desk-war/package.json",
       "accessCount": 1,
-      "lastAccessed": 1774270472195,
+      "lastAccessed": 1774878304876,
       "type": "file"
     },
     {
-      "path": "games/merge-battle-td/vite.config.ts",
+      "path": "games/themed-cell-wars/src/config.ts",
       "accessCount": 1,
-      "lastAccessed": 1774270472892,
+      "lastAccessed": 1774878593170,
       "type": "file"
     },
     {
-      "path": "games/survivor-defense/index.html",
+      "path": "games/themed-desk-war/src/config.ts",
       "accessCount": 1,
-      "lastAccessed": 1774270479856,
+      "lastAccessed": 1774878597355,
       "type": "file"
     },
     {
-      "path": "games/survivor-defense/src/scenes/BootScene.ts",
+      "path": "games/themed-color-wars/src/config.ts",
       "accessCount": 1,
-      "lastAccessed": 1774270483069,
-      "type": "file"
-    },
-    {
-      "path": "games/survivor-defense/src/scenes/GameScene.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774270485198,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/src/scenes/BootScene.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774270488890,
-      "type": "file"
-    },
-    {
-      "path": "README.md",
-      "accessCount": 1,
-      "lastAccessed": 1774275381801,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/src/config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774275386081,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/COLOR_WARS_DESIGN_SHEET.md",
-      "accessCount": 1,
-      "lastAccessed": 1774275392858,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/VISUAL_CONCEPT_RESEARCH.md",
-      "accessCount": 1,
-      "lastAccessed": 1774275393041,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/src/entities/Tower.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774275393526,
-      "type": "file"
-    },
-    {
-      "path": ".agents/skills/game-engine/references/game-engine-core-principles.md",
-      "accessCount": 1,
-      "lastAccessed": 1774275396758,
-      "type": "file"
-    },
-    {
-      "path": "games/merge-battle-td/src/themes/ThemeSystem.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774275397858,
-      "type": "file"
-    },
-    {
-      "path": "ART_CONCEPT_DESK_WAR.md",
-      "accessCount": 1,
-      "lastAccessed": 1774275412290,
-      "type": "file"
-    },
-    {
-      "path": "SIDE_SCROLL_GAME_CONCEPTS.md",
-      "accessCount": 1,
-      "lastAccessed": 1774275802590,
+      "lastAccessed": 1774878602013,
       "type": "file"
     }
   ],
